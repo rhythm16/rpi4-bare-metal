@@ -25,7 +25,7 @@ They all should not have trailing `/`s.
 ```
 6. Slot in the micro SD card then run `make deploy`, then umount the card, plug it into the PI4.
 7. Connect the USB-TTL cable like so:
-![](https://imgur.com/1ohtdeY)
+![](https://i.imgur.com/1ohtdeY.jpeg)
 8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` (you might have to add yourself the the `dialout` group).
 9. Power on the RPI4, you should see the output like `Raspberry Pi 4 bare metal..`
 
