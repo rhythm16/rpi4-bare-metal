@@ -1,0 +1,5 @@
+arm_64bit=1
+disable_commandine_tags=1
+uart_2ndstage=1
+kernel=kernel8.img
+dtoverlay=miniuart-bt
