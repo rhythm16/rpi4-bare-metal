@@ -4,19 +4,13 @@
 
 .globl _start
 _start:
-    /* mpidr_el1 is the multiprocessor affinity register */
-    mrs x0, mpidr_el1
-    and x0, x0, #0xFF
-    /* compare and branch */
-    cbz x0, master
-    /* 
-     * Hang if x0 is not 0, meaning we're not running on core 0.
-     * All the cores will run this code, hang all of them except
-     * core 0.
-     */
+    /* only core 0 starts here */
+    b master
+    /* shouldn't come here */
     b proc_hang
 
 master:
+    mov sp, #LOW_MEMORY
     /* adr is load address */
     adr x0, bss_begin
     adr x1, bss_end
@@ -24,10 +18,32 @@ master:
     /* clear out the bss section */
     /* branch and link, x30 is set to the address of the next instruction */
     bl memzero
-    mov sp, #LOW_MEMORY
+    bl wake_up_cores
     bl kernel_main
     /* shouldn't get here */
     b proc_hang
+
+wake_up_cores:
+    sev
+    mov x0, #0
+    adr x0, app
+    mov x1, #0xe0
+    str x0, [x1]
+    mov x1, #0xe8
+    str x0, [x1]
+    mov x1, #0xf0
+    str x0, [x1]
+    ret
+
+app: /* entry point of the secondary cores */
+    /* setup stack */
+    mrs x0, mpidr_el1
+    and x0, x0, #0xFF
+    mov x1, #SECTION_SIZE
+    mul x1, x1, x0
+    add x1, x1, #LOW_MEMORY
+    mov sp, x1
+    bl kernel_app
 
 proc_hang:
     /* wait for event */
