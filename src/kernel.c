@@ -5,30 +5,26 @@
 
 reg32 state;
 
-void kernel_main()
+void kernel_main(u64 id)
 {
-    uart_init();
-    state = 0;
-    uart_send_string("Bare Metal... (core 0)\n");
-    delay(30000);
-    state = 1;
-
-    while (state != 4) {}
-    while(1) {
-        uart_send(uart_recv());
+    if (id == 0) {
+        uart_init();
+        state = 0;
     }
-}
-
-void kernel_app(u64 id)
-{
-    while (state != id) {
-        delay(100);
-    }
+    while (state != id) {}
     uart_send_string("Bare Metal... (core ");
     uart_send(id + '0');
     uart_send_string(")\n");
     delay(30000);
     state++;
 
-    while(1) {}
+    if (id == 0) {
+        while (state != 4) {}
+        while(1) {
+            uart_send(uart_recv());
+        }
+    }
+    else {
+        while (1) {}
+    }
 }

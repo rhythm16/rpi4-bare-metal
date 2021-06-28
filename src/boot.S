@@ -19,6 +19,8 @@ master:
     /* branch and link, x30 is set to the address of the next instruction */
     bl memzero
     bl wake_up_cores
+    /* we are core 0 */
+    mov x0, #0
     bl kernel_main
     /* shouldn't get here */
     b proc_hang
@@ -43,7 +45,7 @@ app: /* entry point of the secondary cores */
     mul x1, x1, x0
     add x1, x1, #LOW_MEMORY
     mov sp, x1
-    bl kernel_app
+    bl kernel_main
 
 proc_hang:
     /* wait for event */
