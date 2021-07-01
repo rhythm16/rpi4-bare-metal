@@ -8,10 +8,10 @@ ASMFLAGS = -Iinclude
 BUILD_DIR = build
 SRC_DIR = src
 
-all : kernel8.img
+all : kernel8.img armstub8.bin
 
 clean :
-	rm -rf $(BUILD_DIR) *.img
+	rm -rf $(BUILD_DIR) *.img *.bin armstub/build
 
 # target in build dir, all files end in _c.o, showing they were created from a .c file
 # dependency is  in src, all the .c files
@@ -37,15 +37,28 @@ DEP_FILES = $(OBJ_FILES:%.o=%.d)
 -include $(DEP_FILES)
 
 kernel8.img: $(SRC_DIR)/linker.ld $(OBJ_FILES)
-	@echo "Building..."
 	@echo ""
+	@echo "==========================="
+	@echo "Building $@..."
+	@echo "==========================="
 	$(ARM_GNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/kernel8.elf $(OBJ_FILES)
-	$(ARM_GNU)-objcopy $(BUILD_DIR)/kernel8.elf -O binary kernel8.img
+	$(ARM_GNU)-objcopy $(BUILD_DIR)/kernel8.elf -O binary $@
 
-deploy: kernel8.img config.txt
+armstub/build/armstub8_S.o: armstub/src/armstub8.S
+	mkdir -p $(@D)
+	$(ARM_GNU)-gcc $(CFLAGS) -MMD -c $< -o $@
+
+armstub8.bin: armstub/build/armstub8_S.o
+	@echo ""
+	@echo "==========================="
+	@echo "Building $@..."
+	@echo "==========================="
+	$(ARM_GNU)-ld --section-start=.text=0 -o $(<D)/armstub8.elf $<
+	$(ARM_GNU)-objcopy $(<D)/armstub8.elf -O binary $@
+
+deploy: kernel8.img config.txt armstub8.bin
 	rm -rf $(SD_BOOT)/*
-	cp kernel8.img $(SD_BOOT)/
-	cp config.txt $(SD_BOOT)/
+	cp $^ $(SD_BOOT)/
 	cp $(FIRMWARE)/bcm2711-rpi-4-b.dtb $(SD_BOOT)/
 	cp $(FIRMWARE)/start4.elf $(SD_BOOT)/
 	cp $(FIRMWARE)/fixup4.dat $(SD_BOOT)/
