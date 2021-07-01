@@ -8,6 +8,13 @@ ASMFLAGS = -Iinclude
 BUILD_DIR = build
 SRC_DIR = src
 
+define print_build
+	@echo ""
+	@echo "================================"
+	@echo "Building${BLUE}$(1)${NC} ..."
+	@echo "================================"
+endef
+
 all : kernel8.img armstub8.bin
 
 clean :
@@ -18,10 +25,12 @@ clean :
 # $<: first dependency
 # $@: target
 $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
+	$(call print_build, $@)
 	mkdir -p $(@D)
 	$(ARM_GNU)-gcc $(CFLAGS) -MMD -c $< -o $@
 
 $(BUILD_DIR)/%_S.o: $(SRC_DIR)/%.S
+	$(call print_build, $@)
 	mkdir -p $(@D)
 	$(ARM_GNU)-gcc $(ASMFLAGS) -MMD -c $< -o $@
 
@@ -37,22 +46,17 @@ DEP_FILES = $(OBJ_FILES:%.o=%.d)
 -include $(DEP_FILES)
 
 kernel8.img: $(SRC_DIR)/linker.ld $(OBJ_FILES)
-	@echo ""
-	@echo "==========================="
-	@echo "Building $@..."
-	@echo "==========================="
+	$(call print_build, $@)
 	$(ARM_GNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/kernel8.elf $(OBJ_FILES)
 	$(ARM_GNU)-objcopy $(BUILD_DIR)/kernel8.elf -O binary $@
 
 armstub/build/armstub8_S.o: armstub/src/armstub8.S
+	$(call print_build, $@)
 	mkdir -p $(@D)
 	$(ARM_GNU)-gcc $(CFLAGS) -MMD -c $< -o $@
 
 armstub8.bin: armstub/build/armstub8_S.o
-	@echo ""
-	@echo "==========================="
-	@echo "Building $@..."
-	@echo "==========================="
+	$(call print_build, $@)
 	$(ARM_GNU)-ld --section-start=.text=0 -o $(<D)/armstub8.elf $<
 	$(ARM_GNU)-objcopy $(<D)/armstub8.elf -O binary $@
 
