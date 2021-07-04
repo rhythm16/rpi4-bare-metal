@@ -90,9 +90,9 @@
 #define SPSR_EL3_A		BIT(8) // SError interrupt mask
 #define SPSR_EL3_I		BIT(7) // IRQ interrupt mask
 #define SPSR_EL3_F		BIT(6) // FIQ interrupt mask
-#define SPSR_EL3_MODE_EL2H	9  // AArch64 Exception level and selected Stack Pointer, 9 is EL.2h.
+#define SPSR_EL3_MODE_EL3H	13 // AArch64 Exception level and selected Stack Pointer, 13 is EL.3h.
 #define SPSR_EL3_VAL \
-    (SPSR_EL3_D | SPSR_EL3_A | SPSR_EL3_I | SPSR_EL3_F | SPSR_EL3_MODE_EL2H)
+    (SPSR_EL3_D | SPSR_EL3_A | SPSR_EL3_I | SPSR_EL3_F | SPSR_EL3_MODE_EL3H)
 
 /* name for L2CTLR_EL1 is S3_1_C11_C0_2 in Aarch64 */
 #define L2CTLR_EL1		S3_1_C11_C0_2
@@ -161,10 +161,10 @@ _start:
 	/* Switch to EL2 */
 	mov x0, #SPSR_EL3_VAL
 	msr spsr_el3, x0
-	adr x0, in_el2
+	adr x0, still_el3
 	msr elr_el3, x0
 	eret
-in_el2:
+still_el3:
 
 	mrs x6, MPIDR_EL1
 	and x6, x6, #0x3

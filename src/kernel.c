@@ -16,6 +16,9 @@ void kernel_main(u64 id)
     uart_send(id + '0');
     uart_send_string(")\n");
     delay(30000);
+    uart_send_string("EL: ");
+    uart_send(get_el() + '0');
+    uart_send_string("\n");
     state++;
 
     if (id == 0) {

@@ -11,7 +11,7 @@ SRC_DIR = src
 define print_build
 	@echo ""
 	@echo "================================"
-	@echo "Building${BLUE}$(1)${NC} ..."
+	@echo "Building$(1) ..."
 	@echo "================================"
 endef
 
