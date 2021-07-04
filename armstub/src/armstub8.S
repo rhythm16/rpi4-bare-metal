@@ -1,3 +1,4 @@
+/* version: 2020/09/25 */
 /*
  * Copyright (c) 2016-2019 Raspberry Pi (Trading) Ltd.
  * Copyright (c) 2016 Stephen Warren <swarren@wwwdotorg.org>
@@ -29,6 +30,10 @@
 
 #define BIT(x) (1 << (x))
 
+/* RPI4 with no HIGH_PERI set */
+#define BCM2711 1
+#undef HIGH_PERI
+
 #if BCM2711
 #ifdef HIGH_PERI
 #define LOCAL_CONTROL		0x4c0000000
@@ -56,29 +61,40 @@
 #define OSC_FREQ		19200000
 #endif
 
-#define SCR_RW			BIT(10)
-#define SCR_HCE			BIT(8)
-#define SCR_SMD			BIT(7)
-#define SCR_RES1_5		BIT(5)
-#define SCR_RES1_4		BIT(4)
-#define SCR_NS			BIT(0)
+/* security control register */
+#define SCR_RW			BIT(10) // set next lower exception levels to aarch64 p.3571
+#define SCR_HCE			BIT(8)  // hypervisor call enable p.3572
+#define SCR_SMD			BIT(7)  // secure monitor call disable p.3573
+#define SCR_RES1_5		BIT(5)  // reserved as 1 p.3573
+#define SCR_RES1_4		BIT(4)  // reserved as 1 p.3573
+#define SCR_NS			BIT(0)  // non-secure bit, EL0 and EL1 are non-secure p.3574
 #define SCR_VAL \
     (SCR_RW | SCR_HCE | SCR_SMD | SCR_RES1_5 | SCR_RES1_4 | SCR_NS)
 
+/* auxiliary control register for EL3 */
+/* this is implementation defined, so look into the Cortex A72 TRM */
+/* make CPU auxiliary, extended registers and L2 auxiliary, control register */
+/* accessible from a lower exception level */
 #define ACTLR_VAL \
 	(BIT(0) | BIT(1) | BIT(4) | BIT(5) | BIT(6))
 
+/* name for CPUECTLR_EL1 is S3_1_C15_C2_1 in Aarch64 */
+/* also implementation defined */
 #define CPUECTLR_EL1		S3_1_C15_C2_1
+/* enables receiving of instruction cache and TLB maintenance operations */
+/* must be enabled before using caches or MMU */
 #define CPUECTLR_EL1_SMPEN	BIT(6)
 
-#define SPSR_EL3_D		BIT(9)
-#define SPSR_EL3_A		BIT(8)
-#define SPSR_EL3_I		BIT(7)
-#define SPSR_EL3_F		BIT(6)
-#define SPSR_EL3_MODE_EL2H	9
+/* Holds the saved process state when an exception is taken to EL3 */
+#define SPSR_EL3_D		BIT(9) // debug exception mask
+#define SPSR_EL3_A		BIT(8) // SError interrupt mask
+#define SPSR_EL3_I		BIT(7) // IRQ interrupt mask
+#define SPSR_EL3_F		BIT(6) // FIQ interrupt mask
+#define SPSR_EL3_MODE_EL2H	9  // AArch64 Exception level and selected Stack Pointer, 9 is EL.2h.
 #define SPSR_EL3_VAL \
     (SPSR_EL3_D | SPSR_EL3_A | SPSR_EL3_I | SPSR_EL3_F | SPSR_EL3_MODE_EL2H)
 
+/* name for L2CTLR_EL1 is S3_1_C11_C0_2 in Aarch64 */
 #define L2CTLR_EL1		S3_1_C11_C0_2
 
 
@@ -112,12 +128,12 @@ _start:
 	msr CNTFRQ_EL0, x0
 
 	/* Set up CNTVOFF_EL2 */
+    /* physical timer value = virtual timer value */
 	msr CNTVOFF_EL2, xzr
 
 	/* Enable FP/SIMD */
-	/* All set bits below are res1; bit 10 (TFP) is set to 0 */
-	mov x0, #0x33ff
-	msr CPTR_EL3, x0
+	/* bit 10 (TFP) is set to 0, others are res0 */
+	msr CPTR_EL3, xzr
 
 	/* Set up SCR */
 	mov x0, #SCR_VAL
@@ -131,6 +147,7 @@ _start:
 	mov x0, #CPUECTLR_EL1_SMPEN
 	msr CPUECTLR_EL1, x0
 
+#undef GIC // no GIC for now
 #ifdef GIC
         bl      setup_gic
 #endif
