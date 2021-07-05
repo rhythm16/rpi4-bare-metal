@@ -10,12 +10,8 @@ _start:
     /* shouldn't come here */
     b proc_hang
 
-master:
-    adr x0, el1_entry
-    msr ELR_EL3, x0
-    eret
-
-el1_entry:
+master: /* entry point of the primary core */
+    bl drop_to_el1
     mov sp, #LOW_MEMORY
     /* adr is load address */
     adr x0, bss_begin
@@ -31,6 +27,24 @@ el1_entry:
     /* shouldn't get here */
     b proc_hang
 
+app: /* entry point of the secondary cores */
+    bl drop_to_el1
+    /* setup stack */
+    mrs x0, mpidr_el1
+    and x0, x0, #0xFF
+    mov x1, #SECTION_SIZE
+    mul x1, x1, x0
+    add x1, x1, #LOW_MEMORY
+    mov sp, x1
+    bl kernel_main
+
+drop_to_el1:
+    adr x0, el1_entry
+    msr ELR_EL3, x0
+    eret
+el1_entry:
+    ret
+
 wake_up_cores:
     sev
     mov x0, #0
@@ -42,16 +56,6 @@ wake_up_cores:
     mov x1, #0xf0
     str x0, [x1]
     ret
-
-app: /* entry point of the secondary cores */
-    /* setup stack */
-    mrs x0, mpidr_el1
-    and x0, x0, #0xFF
-    mov x1, #SECTION_SIZE
-    mul x1, x1, x0
-    add x1, x1, #LOW_MEMORY
-    mov sp, x1
-    bl kernel_main
 
 proc_hang:
     /* wait for event */
