@@ -158,7 +158,7 @@ _start:
 	ldr x0, =0x30c50830
 	msr SCTLR_EL2, x0
 
-	/* Switch to EL2 */
+	/* Switch to EL3 */
 	mov x0, #SPSR_EL3_VAL
 	msr spsr_el3, x0
 	adr x0, still_el3

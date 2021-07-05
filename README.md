@@ -35,7 +35,7 @@ They all should not have trailing `/`s.
 9. Power on the RPI4, you should see the output like:
 ```
 Bare metal... (core 0)
-EL: 3
+EL: 1
 Bare metal... (core 1)
 EL: 3
 Bare metal... (core 2)

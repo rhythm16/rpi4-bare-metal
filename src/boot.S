@@ -1,4 +1,5 @@
 #include "mm.h"
+#include "sysregs.h"
 
 .section ".text.boot"
 
@@ -10,6 +11,23 @@ _start:
     b proc_hang
 
 master:
+    /* setup SCTLR_EL1 */
+    ldr x0, =SCTLR_EL1_VAL_MMU_DISABLED
+    msr SCTLR_EL1, x0
+
+    /* setup HCR_EL2 */
+    ldr x0, =HCR_EL2_VAL
+    msr HCR_EL2, x0
+
+    /* setup SPSR_EL3 */
+    ldr x0, =SPSR_EL3_VAL
+    msr SPSR_EL3, x0
+
+    adr x0, el1_entry
+    msr ELR_EL3, x0
+    eret
+
+el1_entry:
     mov sp, #LOW_MEMORY
     /* adr is load address */
     adr x0, bss_begin
