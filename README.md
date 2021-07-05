@@ -6,6 +6,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 
 - [x] Lesson 01 (mini-uart output)
 - [x] Exercise 1-3 (enable SMP)
+- [x] Lesson 02 (sysregs and drop to EL1)
 
 ## What you need
 * Raspberry pi 4 model b
@@ -37,11 +38,11 @@ They all should not have trailing `/`s.
 Bare metal... (core 0)
 EL: 1
 Bare metal... (core 1)
-EL: 3
+EL: 1
 Bare metal... (core 2)
-EL: 3
+EL: 1
 Bare metal... (core 3)
-EL: 3
+EL: 1
 ```
 ## Caveats
 There are some problems/questions that I found during this:
