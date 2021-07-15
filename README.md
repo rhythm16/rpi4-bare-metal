@@ -51,6 +51,7 @@ There are some problems/questions that I found during this:
 * Low level devel uses the RPI3's way to enable the GPIO pins, using the `GPPUD` and `GPPUDCLK` registers, which doesn't even exist on the bcm2711 datasheet, I used the `GPIO_PUP_PDN_CNTRL_REG`s documented in the bcm2711 datasheet. However they both work in my testing.
 * In both the bcm2711 and bcm2835's peripheral datasheet, the bits 5:1 of the `AUX_MU_LCR_REG` register is documented as reserved. However `AUX_MU_LCR_REG` must be set to 3 (00b) in order for the miniuart to work properly.
 * The newer firmware also starts the secondary cpus different from what is said in lesson 01, check the [exercise 1-3 solution for RPI4](https://github.com/s-matyukevich/raspberry-pi-os/blob/master/exercises/lesson01/3/szediwy/src/boot.S) for reference.
+* The "functions" in assembly source files do not implement function prologues, be careful not to call functions within a function, otherwise the stack frames would be corrupted.
 
 ## Useful Links
 [bcm2711 peripherals datasheet](https://datasheets.raspberrypi.org/bcm2711/bcm2711-peripherals.pdf)
