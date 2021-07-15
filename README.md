@@ -7,6 +7,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Lesson 01 (mini-uart output)
 - [x] Exercise 1-3 (enable SMP)
 - [x] Lesson 02 (sysregs and drop to EL1)
+- [x] Exercise 2-2 (enable FP/SIMD registers)
 
 ## What you need
 * Raspberry pi 4 model b

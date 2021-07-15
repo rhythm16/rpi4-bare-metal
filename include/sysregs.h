@@ -50,7 +50,13 @@
 
 #define SCTLR_EL1_VAL_MMU_DISABLED (SCTLR_EL1_RESERVED | SCTLR_EL1_EE_LITTLE_ENDIAN | SCTLR_EL1_I_CACHE_DISABLED | SCTLR_EL1_D_CACHE_DISABLED | SCTLR_EL1_MMU_DISABLED)
 
-#define HCR_EL2_RW                   BIT(31)
+/* hypervisor control register */
+#define HCR_EL2_RW                   BIT(31) // EL1 is AArch64
 #define HCR_EL2_VAL                  HCR_EL2_RW
+
+/* architectural feature access control register */
+#define CPACR_EL1_FPEN    BIT(21) | BIT(20) // don't trap SIMD/FP registers
+#define CPACR_EL1_ZEN     BIT(17) | BIT(16)  // don't trap SVE instructions
+#define CPACR_EL1_VAL     (CPACR_EL1_FPEN | CPACR_EL1_ZEN)
 
 #endif /* SYSREGS_H */
