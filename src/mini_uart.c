@@ -17,8 +17,8 @@ void uart_init()
     REGS_AUX->enables = 1;
     /* disable TX and RX and auto flow control */
     REGS_AUX->mu_control = 0;
-    /* disable TX RX interrupts */
-    REGS_AUX->mu_ier = 0;
+    /* enable receive interrupts */
+    REGS_AUX->mu_ier = 2;
     /* set 8-bit mode */
     REGS_AUX->mu_lcr = 3;
     /* set RTS to always high */

@@ -2,6 +2,7 @@
 #include "types.h"
 #include "mini_uart.h"
 #include "utils.h"
+#include "irq.h"
 
 reg32 state;
 
@@ -22,9 +23,15 @@ void kernel_main(u64 id)
     state++;
 
     if (id == 0) {
+        /* wait for the other cores to finish printing */
         while (state != 4) {}
+
+        irq_init_vectors();
+        enable_core0_interrupt_controller_AUX();
+        irq_enable();
+
         while(1) {
-            uart_send(uart_recv());
+            //uart_send(uart_recv());
         }
     }
     else {
