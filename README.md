@@ -8,6 +8,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Exercise 1-3 (enable SMP)
 - [x] Lesson 02 (sysregs and drop to EL1)
 - [x] Exercise 2-2 (enable FP/SIMD registers)
+- [x] Mini-UART recv interrupt
 
 ## What you need
 * Raspberry pi 4 model b
@@ -44,6 +45,12 @@ Bare metal... (core 2)
 EL: 1
 Bare metal... (core 3)
 EL: 1
+```
+10. Type some characters, they should be appended:
+```
+Mini-UART Recv: s
+Mini-UART Recv: f
+Mini-UART Recv: a
 ```
 ## Caveats
 There are some problems/questions that I found during this:
