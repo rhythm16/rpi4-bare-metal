@@ -27,7 +27,7 @@ void show_invalid_entry_message(u32 type, u64 esr, u64 address)
 {
     uart_send_string("ERROR CAUGHT: ");
     uart_send_string(entry_error_messages[type]);
-    uart_send_string(", ERS: TODO, Address: TODO \n");
+    uart_send_string(", ESR: TODO, Address: TODO \n");
 }
 
 void enable_core0_interrupt_controller_AUX()

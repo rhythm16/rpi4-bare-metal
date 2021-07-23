@@ -8,7 +8,7 @@ enum vc_irqs {
     AUX_IRQ = (1 << 29)
 };
 
-/* core 0's videocore interrupt control */
+/* videocore interrupt control layout */
 struct arm_irq_regs_2711 {
     reg32 irq_pending_0;
     reg32 irq_pending_1;
