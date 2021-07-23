@@ -52,6 +52,7 @@ timer 1 interrupt
 timer 1 interrupt
 ```
 with timer interrupts happening once every second
+
 10. Type some characters, they should be appended:
 ```
 Mini-UART Recv: s
