@@ -2,6 +2,7 @@
 #include "mini_uart.h"
 #include "peripherals/irq.h"
 #include "peripherals/aux.h"
+#include "timer.h"
 
 const char entry_error_messages[16][32] = 
 {
@@ -30,9 +31,9 @@ void show_invalid_entry_message(u32 type, u64 esr, u64 address)
     uart_send_string(", ESR: TODO, Address: TODO \n");
 }
 
-void enable_core0_interrupt_controller_AUX()
+void enable_core0_interrupt_controller_AUX_and_sysclock()
 {
-    REGS_IRQ0->irq_enable_0 = AUX_IRQ;
+    REGS_IRQ0->irq_enable_0 = AUX_IRQ | SYS_TIMER_IRQ_1;
 }
 
 void handle_irq()
@@ -48,6 +49,10 @@ void handle_irq()
                 uart_send(uart_recv());
                 uart_send_string("\n");
             }
+        }
+        if (irq & SYS_TIMER_IRQ_1) {
+            irq &= ~SYS_TIMER_IRQ_1;
+            handle_sys_timer_1();
         }
     }
 }

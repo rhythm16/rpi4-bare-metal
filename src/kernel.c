@@ -3,6 +3,7 @@
 #include "mini_uart.h"
 #include "utils.h"
 #include "irq.h"
+#include "timer.h"
 
 reg32 state;
 
@@ -10,6 +11,7 @@ void kernel_main(u64 id)
 {
     if (id == 0) {
         uart_init();
+        timer_init();
         state = 0;
     }
     while (state != id) {}
@@ -27,7 +29,7 @@ void kernel_main(u64 id)
         while (state != 4) {}
 
         irq_init_vectors();
-        enable_core0_interrupt_controller_AUX();
+        enable_core0_interrupt_controller_AUX_and_sysclock();
         irq_enable();
 
         while(1) {

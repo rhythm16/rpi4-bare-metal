@@ -5,6 +5,6 @@ void irq_init_vectors();
 void irq_enable();
 void irq_disable();
 
-void enable_core0_interrupt_controller_AUX();
+void enable_core0_interrupt_controller_AUX_and_sysclock();
 
 #endif /* IRQ_H */
