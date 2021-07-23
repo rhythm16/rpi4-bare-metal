@@ -1,6 +1,7 @@
 #include "types.h"
 #include "mini_uart.h"
 #include "peripherals/irq.h"
+#include "irq_numbers.h"
 #include "peripherals/aux.h"
 #include "timer.h"
 
@@ -31,9 +32,12 @@ void show_invalid_entry_message(u32 type, u64 esr, u64 address)
     uart_send_string(", ESR: TODO, Address: TODO \n");
 }
 
-void enable_core0_interrupt_controller_AUX_and_sysclock()
+void enable_core0_interrupt_controller(int count, int *irq_numbers)
 {
-    REGS_IRQ0->irq_enable_0 = AUX_IRQ | SYS_TIMER_IRQ_1;
+    REGS_IRQ0->irq_enable_0 = 0;
+    for (int i = 0; i < count; i++) {
+        REGS_IRQ0->irq_enable_0  |= (1 << irq_numbers[i]);
+    }
 }
 
 void handle_irq()
@@ -42,16 +46,16 @@ void handle_irq()
     irq = REGS_IRQ0->irq_pending_0;
     
     while(irq) {
-        if (irq & AUX_IRQ) {
-            irq &= ~AUX_IRQ;
+        if (irq & (1 << AUX_IRQ)) {
+            irq &= ~(1 << AUX_IRQ);
             while ((REGS_AUX->mu_iir & 4) == 4) {
                 uart_send_string("Mini-UART Recv: ");
                 uart_send(uart_recv());
                 uart_send_string("\n");
             }
         }
-        if (irq & SYS_TIMER_IRQ_1) {
-            irq &= ~SYS_TIMER_IRQ_1;
+        if (irq & (1 << SYS_TIMER_IRQ_1)) {
+            irq &= ~(1 << SYS_TIMER_IRQ_1);
             handle_sys_timer_1();
         }
     }
