@@ -46,7 +46,12 @@ Bare metal... (core 2)
 EL: 1
 Bare metal... (core 3)
 EL: 1
+timer 1 interrupt
+timer 1 interrupt
+timer 1 interrupt
+timer 1 interrupt
 ```
+with timer interrupts happening once every second
 10. Type some characters, they should be appended:
 ```
 Mini-UART Recv: s
