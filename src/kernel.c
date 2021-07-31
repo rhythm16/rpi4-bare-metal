@@ -30,16 +30,13 @@ void kernel_main(u64 id)
         while (state != 4) {}
 
         irq_init_vectors();
-        //enable_core0_interrupt_controller_AUX_and_sysclock();
         int irqs[2];
         irqs[0] = SYS_TIMER_IRQ_1;
         irqs[1] = AUX_IRQ;
         enable_core0_interrupt_controller(2, irqs);
         irq_enable();
 
-        while(1) {
-            //uart_send(uart_recv());
-        }
+        while (1) {}
     }
     else {
         while (1) {}

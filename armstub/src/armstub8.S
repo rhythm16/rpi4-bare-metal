@@ -112,6 +112,7 @@ _start:
     msr CPUECTLR_EL1, x0
 
 #undef GIC // no GIC for now
+#define GIC
 #ifdef GIC
         bl      setup_gic
 #endif

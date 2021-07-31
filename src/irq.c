@@ -36,7 +36,7 @@ void enable_core0_interrupt_controller(int count, int *irq_numbers)
 {
     REGS_IRQ0->irq_enable_0 = 0;
     for (int i = 0; i < count; i++) {
-        REGS_IRQ0->irq_enable_0  |= (1 << irq_numbers[i]);
+        REGS_IRQ0->irq_enable_0 |= (1 << irq_numbers[i]);
     }
 }
 
