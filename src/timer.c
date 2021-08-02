@@ -19,6 +19,6 @@ void handle_sys_timer_1()
 {
     cur_ls32_1 += interval_1;
     SYS_REGS_TIMER->compare[1] = cur_ls32_1;
-    SYS_REGS_TIMER->countrol_status |= (1 << SYS_TIMER_IRQ_1);
+    SYS_REGS_TIMER->countrol_status |= (1 << 1);
     uart_send_string("timer 1 interrupt\n");
 }

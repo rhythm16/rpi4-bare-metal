@@ -4,3 +4,5 @@ uart_2ndstage=1
 kernel=kernel8.img
 dtoverlay=miniuart-bt
 armstub=armstub8.bin
+arm_peri_high=0
+enable_gic=1

@@ -30,10 +30,8 @@ void kernel_main(u64 id)
         while (state != 4) {}
 
         irq_init_vectors();
-        int irqs[2];
-        irqs[0] = SYS_TIMER_IRQ_1;
-        irqs[1] = AUX_IRQ;
-        enable_core0_interrupt_controller(2, irqs);
+        enable_interrupt_gic(VC_TIMER_IRQ_1, 0);
+        enable_interrupt_gic(VC_AUX_IRQ, 0);
         irq_enable();
 
         while (1) {}

@@ -4,21 +4,27 @@
 #include "peripherals/base.h"
 #include "types.h"
 
-/* videocore interrupt control layout */
-struct arm_irq_regs_2711 {
-    reg32 irq_pending_0;
-    reg32 irq_pending_1;
-    reg32 irq_pending_2;
-    reg32 res0;
-    reg32 irq_enable_0;
-    reg32 irq_enable_1;
-    reg32 irq_enable_2;
-    reg32 res1;
-    reg32 irq_disable_0;
-    reg32 irq_disable_1;
-    reg32 irq_disable_2;
+#define GIC_BASE            0xFF840000
+#define GICD_BASE           (GIC_BASE + 0x1000)
+#define GICC_BASE           (GIC_BASE + 0x2000)
+
+#define GICD_ISENABLER_BASE (GICD_BASE + 0x100)
+#define GICD_ITARGETSR_BASE (GICD_BASE + 0x800)
+
+#define GICC_IAR            (GICC_BASE + 0x0C)
+#define GICC_EOIR           (GICC_BASE + 0x10)
+
+struct distributor_enable_regs
+{
+    reg32 bitmap[32];
 };
 
-#define REGS_IRQ0 ((struct arm_irq_regs_2711 *)(PBASE + 0xb200))
+struct distributor_target_regs
+{
+    reg32 set[255];
+};
+
+#define GICD_ISENABLERN     ((struct distributor_enable_regs *)(GICD_ISENABLER_BASE))
+#define GICD_ITARGETSRN     ((struct distributor_target_regs *)(GICD_ITARGETSR_BASE))
 
 #endif /* PER_IRQ_H */

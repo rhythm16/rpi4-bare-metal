@@ -32,32 +32,43 @@ void show_invalid_entry_message(u32 type, u64 esr, u64 address)
     uart_send_string(", ESR: TODO, Address: TODO \n");
 }
 
-void enable_core0_interrupt_controller(int count, int *irq_numbers)
+void enable_gic_distributor(u32 INTID)
 {
-    REGS_IRQ0->irq_enable_0 = 0;
-    for (int i = 0; i < count; i++) {
-        REGS_IRQ0->irq_enable_0 |= (1 << irq_numbers[i]);
-    }
+    u32 n = INTID / 32;
+    u32 shift = INTID % 32;
+    GICD_ISENABLERN->bitmap[n] |= (1 << shift);
+}
+
+void assign_interrupt_core(u32 INTID, u32 core)
+{
+    u32 n = INTID / 4;
+    u32 byte_offset = INTID % 4;
+    u32 shift = byte_offset * 8 + core;
+    GICD_ITARGETSRN->set[n] |= (1 << shift);
+}
+
+void enable_interrupt_gic(u32 INTID, u32 core)
+{
+    enable_gic_distributor(INTID);
+    assign_interrupt_core(INTID, core);
 }
 
 void handle_irq()
 {
-    u32 irq;
-    irq = REGS_IRQ0->irq_pending_0;
-    
-    while(irq) {
-        if (irq & (1 << AUX_IRQ)) {
-            irq &= ~(1 << AUX_IRQ);
-            while ((REGS_AUX->mu_iir & 4) == 4) {
-                uart_send_string("Mini-UART Recv: ");
-                uart_send(uart_recv());
-                uart_send_string("\n");
-            }
-        }
-        if (irq & (1 << SYS_TIMER_IRQ_1)) {
-            irq &= ~(1 << SYS_TIMER_IRQ_1);
+    reg32 IAR = *((reg32*)GICC_IAR);
+    u32 INTID = IAR & 0x2FF;
+    switch (INTID) {
+        case (VC_TIMER_IRQ_1):
             handle_sys_timer_1();
-        }
+            *((reg32*)GICC_EOIR) = IAR;
+            break;
+        case (VC_AUX_IRQ):
+            uart_send_string("Mini-UART Recv: ");
+            uart_send(uart_recv());
+            uart_send_string("\n");
+            *((reg32*)GICC_EOIR) = IAR;
+            break;
+        default:
+            uart_send_string("unknown pending irq\n");
     }
 }
-
