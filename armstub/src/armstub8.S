@@ -111,7 +111,6 @@ _start:
     mov x0, #CPUECTLR_EL1_SMPEN
     msr CPUECTLR_EL1, x0
 
-#undef GIC // no GIC for now
 #define GIC
 #ifdef GIC
         bl      setup_gic
