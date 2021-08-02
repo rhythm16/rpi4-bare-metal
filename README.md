@@ -10,6 +10,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Exercise 2-2 (enable FP/SIMD registers)
 - [x] Lesson 03 (system timer interrupt)
 - [x] Exercise 3-2 (Mini-UART recv interrupt)
+- [x] use the GIC-400 as the interrupt controller
 
 ## What you need
 * Raspberry pi 4 model b
