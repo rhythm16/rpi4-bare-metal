@@ -48,9 +48,13 @@ EL: 1
 Bare metal... (core 3)
 EL: 1
 timer 1 interrupt
+000000000338b888
 timer 1 interrupt
+000000000670b1f9
 timer 1 interrupt
+0000000009a8abab
 timer 1 interrupt
+000000000ce0a4f4
 ```
 with timer interrupts happening once every second
 
@@ -60,7 +64,7 @@ Mini-UART Recv: s
 Mini-UART Recv: f
 Mini-UART Recv: a
 ```
-## Caveats
+## Caveats & Notes
 There are some problems/questions that I found during this:
 * Sergey said add `kernel_old=1` in `config.txt`, but it was the opposite, adding the line render it not working (Low level devel doesn't add it either). [This discussion](https://github.com/s-matyukevich/raspberry-pi-os/issues/206) says it is the issue of newer RPI firmware.
 * Low level devel said the RPI4's system clock frequency is 500MHz, this is correct in my testing, but I can't find this anywhere, in fact the bcm2711 (the soc on the PI4) peripheral datasheet actually says the system clock frequency is 250MHz on page 10.
@@ -68,6 +72,7 @@ There are some problems/questions that I found during this:
 * In both the bcm2711 and bcm2835's peripheral datasheet, the bits 5:1 of the `AUX_MU_LCR_REG` register is documented as reserved. However `AUX_MU_LCR_REG` must be set to 3 (00b) in order for the miniuart to work properly. This is addressed [here](https://elinux.org/BCM2835_datasheet_errata#p14). I guess the bcm2711 datasheet has the same problem.
 * The newer firmware also starts the secondary cpus different from what is said in lesson 01, check the [exercise 1-3 solution for RPI4](https://github.com/s-matyukevich/raspberry-pi-os/blob/master/exercises/lesson01/3/szediwy/src/boot.S) for reference.
 * The "functions" in assembly source files do not implement function prologues, be careful not to call functions within a function, otherwise the stack frames would be corrupted.
+* For some info on the GIC-400, see what I wrote [here](https://github.com/s-matyukevich/raspberry-pi-os/issues/237).
 
 ## Useful Links
 [bcm2711 peripherals datasheet](https://datasheets.raspberrypi.org/bcm2711/bcm2711-peripherals.pdf)
