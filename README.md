@@ -10,7 +10,8 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Exercise 2-2 (enable FP/SIMD registers)
 - [x] Lesson 03 (system timer interrupt)
 - [x] Exercise 3-2 (Mini-UART recv interrupt)
-- [x] use the GIC-400 as the interrupt controller
+- [x] Use the GIC-400 as the interrupt controller
+- [x] Switch to using the ARM generic timer
 
 ## What you need
 * Raspberry pi 4 model b
@@ -47,14 +48,10 @@ Bare metal... (core 2)
 EL: 1
 Bare metal... (core 3)
 EL: 1
-timer 1 interrupt
-000000000338b888
-timer 1 interrupt
-000000000670b1f9
-timer 1 interrupt
-0000000009a8abab
-timer 1 interrupt
-000000000ce0a4f4
+generic timer interrupt
+generic timer interrupt
+generic timer interrupt
+generic timer interrupt
 ```
 with timer interrupts happening once every second
 

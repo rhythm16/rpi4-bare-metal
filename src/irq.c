@@ -4,6 +4,7 @@
 #include "irq_numbers.h"
 #include "peripherals/aux.h"
 #include "timer.h"
+#include "generic_timer.h"
 
 const char entry_error_messages[16][32] = 
 {
@@ -66,6 +67,10 @@ void handle_irq()
             uart_send_string("Mini-UART Recv: ");
             uart_send(uart_recv());
             uart_send_string("\n");
+            *((reg32*)GICC_EOIR) = IAR;
+            break;
+        case (NS_PHYS_TIMER_IRQ):
+            handle_generic_timer();
             *((reg32*)GICC_EOIR) = IAR;
             break;
         default:

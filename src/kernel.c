@@ -5,6 +5,7 @@
 #include "irq_numbers.h"
 #include "irq.h"
 #include "timer.h"
+#include "generic_timer.h"
 
 reg32 state;
 
@@ -12,7 +13,7 @@ void kernel_main(u64 id)
 {
     if (id == 0) {
         uart_init();
-        timer_init();
+        generic_timer_init();
         state = 0;
     }
     while (state != id) {}
@@ -30,7 +31,7 @@ void kernel_main(u64 id)
         while (state != 4) {}
 
         irq_init_vectors();
-        enable_interrupt_gic(VC_TIMER_IRQ_1, 0);
+        enable_interrupt_gic(NS_PHYS_TIMER_IRQ, 0);
         enable_interrupt_gic(VC_AUX_IRQ, 0);
         irq_enable();
 
