@@ -11,7 +11,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Lesson 03 (system timer interrupt)
 - [x] Exercise 3-2 (Mini-UART recv interrupt)
 - [x] Use the GIC-400 as the interrupt controller
-- [x] Switch to using the ARM generic timer
+- [x] Switch to using the ARM generic timer (with SMP)
 
 ## What you need
 * Raspberry pi 4 model b
@@ -40,18 +40,26 @@ They all should not have trailing `/`s.
 8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` (you might have to add yourself the the `dialout` group).
 9. Power on the RPI4, you should see the output like:
 ```
-Bare metal... (core 0)
+Bare Metal... (core 0)
 EL: 1
-Bare metal... (core 1)
+0000000000037fcd
+Bare Metal... (core 1)
 EL: 1
-Bare metal... (core 2)
+000000000008a532
+Bare Metal... (core 2)
 EL: 1
-Bare metal... (core 3)
+00000000000dcaa6
+Bare Metal... (core 3)
 EL: 1
-generic timer interrupt
-generic timer interrupt
-generic timer interrupt
-generic timer interrupt
+000000000012f3e0
+core 0: generic timer interrupt
+core 1: generic timer interrupt
+core 2: generic timer interrupt
+core 3: generic timer interrupt
+core 0: generic timer interrupt
+core 1: generic timer interrupt
+core 2: generic timer interrupt
+core 3: generic timer interrupt
 ```
 with timer interrupts happening once every second
 
