@@ -12,6 +12,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Exercise 3-2 (Mini-UART recv interrupt)
 - [x] Use the GIC-400 as the interrupt controller
 - [x] Switch to using the ARM generic timer (with SMP)
+- [x] Lesson 04 (kernel threads & the scheduler)
 
 ## What you need
 * Raspberry pi 4 model b
@@ -42,26 +43,33 @@ They all should not have trailing `/`s.
 ```
 Bare Metal... (core 0)
 EL: 1
-0000000000037fcd
+000000000011a466
 Bare Metal... (core 1)
 EL: 1
-000000000008a532
+000000000016c382
 Bare Metal... (core 2)
 EL: 1
-00000000000dcaa6
+00000000001bdce1
 Bare Metal... (core 3)
 EL: 1
-000000000012f3e0
+000000000020f81f
+task address: 0000000000082e40, state: 0000000000000000, counter: 0000000000000000, priority: 0000000000000001, preempt_count: 0000000000000000
+init schedule..
+task1
+task1
+reset timer
+write back IAR
 core 0: generic timer interrupt
-core 1: generic timer interrupt
-core 2: generic timer interrupt
-core 3: generic timer interrupt
+task address: 0000000040000000, state: 0000000000000000, counter: 0000000000000001, priority: 0000000000000001, preempt_count: 0000000000000000
+task2
+task2
+reset timer
+write back IAR
 core 0: generic timer interrupt
-core 1: generic timer interrupt
-core 2: generic timer interrupt
-core 3: generic timer interrupt
+task address: 0000000040001000, state: 0000000000000000, counter: 0000000000000001, priority: 0000000000000001, preempt_count: 0000000000000000
+init schedule..
 ```
-with timer interrupts happening once every second
+with timer interrupts happening once every second and task switching between init, task 1 and task 2.
 
 10. Type some characters, they should be appended:
 ```
