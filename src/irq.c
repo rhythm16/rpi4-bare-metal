@@ -5,6 +5,7 @@
 #include "peripherals/aux.h"
 #include "timer.h"
 #include "generic_timer.h"
+#include "utils.h"
 
 const char entry_error_messages[16][32] = 
 {
@@ -70,8 +71,19 @@ void handle_irq()
             *((reg32*)GICC_EOIR) = IAR;
             break;
         case (NS_PHYS_TIMER_IRQ):
+            if (get_core() == 0)
+                uart_send_string("reset timer\n");
             handle_generic_timer();
+            if (get_core() == 0)
+                uart_send_string("write back IAR\n");
             *((reg32*)GICC_EOIR) = IAR;
+            if (get_core() == 0) {
+                uart_send_string("core ");
+                uart_send(get_core() + '0');
+                uart_send_string(": generic timer interrupt\n");
+                uart_process(current);
+                timer_tick();
+            }
             break;
         default:
             uart_send_string("unknown pending irq\n");

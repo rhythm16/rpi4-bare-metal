@@ -10,9 +10,11 @@ void generic_timer_init()
 
 void handle_generic_timer()
 {
+    /*
     uart_send_string("core ");
     uart_send(get_core() + '0');
     uart_send_string(": generic timer interrupt\n");
+    */
     set_CNTP_TVAL(SYS_FREQ);
 }
 

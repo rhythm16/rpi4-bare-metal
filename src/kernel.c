@@ -6,8 +6,19 @@
 #include "irq.h"
 #include "timer.h"
 #include "generic_timer.h"
+#include "fork.h"
+#include "sched.h"
 
 reg32 state;
+
+void process(char *array)
+{
+    while (1) {
+        uart_send_string(array);
+        uart_send_string("\n");
+        delay(10000000);
+    }
+}
 
 void kernel_main(u64 id)
 {
@@ -31,10 +42,7 @@ void kernel_main(u64 id)
     uart_send_string("\n");
     /* also output the syscount */
     u64 sys_count = get_sys_count();
-    char printable[17];
-    u64_to_char_array(sys_count, printable);
-    printable[16] = '\0';
-    uart_send_string(printable);
+    uart_u64(sys_count);
     uart_send_string("\n");
 
     /* initialize exception vectors and timers and the timer interrupt */
@@ -46,5 +54,22 @@ void kernel_main(u64 id)
     /* let the next core run */
     state++;
 
-    while (1) {}
+    while (1) {
+        if (id != 0 || state != 4)
+            continue;
+        sched_init();
+        uart_process(current);
+        int res = copy_process((u64)&process, (u64)"task1");
+        if (res != 0) {
+            uart_send_string("fork error \n");
+        }
+        res = copy_process((u64)&process, (u64)"task2");
+        if (res != 0) {
+            uart_send_string("fork error \n");
+        }
+        while (1) {
+            uart_send_string("init schedule..\n");
+            schedule();
+        }
+    }
 }

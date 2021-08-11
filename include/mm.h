@@ -9,10 +9,20 @@
 
 #define LOW_MEMORY (2* SECTION_SIZE)
 
+#define MALLOC_START 0x40000000
+#define MALLOC_END   0xFC000000
+#define MALLOC_SIZE  (MALLOC_END - MALLOC_START)
+#define MALLOC_PAGES (MALLOC_SIZE / PAGE_SIZE)
+#define THREAD_SIZE  PAGE_SIZE
+
 #ifndef __ASSEMBLER__
 
-void memzero(unsigned long src, unsigned int n);
+#include "types.h"
 
-#endif
+void memzero(unsigned long src, unsigned int n);
+u64 get_free_page();
+void free_page(u64 p);
+
+#endif /* __ASSEMBLER__ */
 
 #endif /* MM_H */

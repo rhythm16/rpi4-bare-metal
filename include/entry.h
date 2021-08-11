@@ -21,6 +21,11 @@
 #define FIQ_INVALID_EL0_32      14
 #define SERROR_INVALID_EL0_32   15
 
-#define S_FRAME_SIZE            256
+#define S_FRAME_SIZE            272
 
+#ifndef __ASSEMBLER__
+
+void ret_from_fork();
+
+#endif /* __ASSEMBLER */
 #endif /* ENTRY_H */
