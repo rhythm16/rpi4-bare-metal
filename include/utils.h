@@ -13,7 +13,7 @@ u32 get_core();
 
 /* in utilc.c */
 void u64_to_char_array(u64 in, char *buf);
-void uart_u64(u64 in);
-void uart_process(struct task_struct *p);
+void mini_uart_u64(u64 in);
+void mini_uart_process(struct task_struct *p);
 
 #endif /* UTILS_H */

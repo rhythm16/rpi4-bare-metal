@@ -2,17 +2,17 @@
 #include "peripherals/aux.h"
 #include "mini_uart.h"
 
-#define TXD 14
-#define RXD 15
+#define TXD0 14
+#define RXD0 15
 
-void uart_init()
+void mini_uart_init()
 {
     /* set pin 14 and 15 to UART1 (mini-uart) */
-    gpio_pin_set_func(TXD, GFAlt5);
-    gpio_pin_set_func(RXD, GFAlt5);
+    gpio_pin_set_func(TXD0, GFAlt5);
+    gpio_pin_set_func(RXD0, GFAlt5);
     /* clear the pud resistors (initialize them) */
-    gpio_pin_enable(TXD);
-    gpio_pin_enable(RXD);
+    gpio_pin_enable(TXD0);
+    gpio_pin_enable(RXD0);
     /* enable mini-uart */
     REGS_AUX->enables = 1;
     /* disable TX and RX and auto flow control */
@@ -28,12 +28,12 @@ void uart_init()
     /* enable TX and RX */
     REGS_AUX->mu_control = 3;
 
-    uart_send('\r');
-    uart_send('\n');
-    uart_send('\n');
+    mini_uart_send('\r');
+    mini_uart_send('\n');
+    mini_uart_send('\n');
 }
 
-void uart_send(char c)
+void mini_uart_send(char c)
 {
     /* keep looping if the 5th bit is 0 */
     while (!(REGS_AUX->mu_lsr & 0x20));
@@ -41,20 +41,20 @@ void uart_send(char c)
     REGS_AUX->mu_io = c;
 }
 
-char uart_recv()
+char mini_uart_recv()
 {
     while (!(REGS_AUX->mu_lsr & 1));
 
     return REGS_AUX->mu_io & 0xFF;
 }
 
-void uart_send_string(char *str)
+void mini_uart_send_string(char *str)
 {
     while (*str) {
         if (*str == '\n')
             /* also do CR if there's a '\n' */
-            uart_send('\r');
-        uart_send(*str);
+            mini_uart_send('\r');
+        mini_uart_send(*str);
         str++;
     }
 }

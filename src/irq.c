@@ -29,9 +29,9 @@ const char entry_error_messages[16][32] =
 
 void show_invalid_entry_message(u32 type, u64 esr, u64 address) 
 {
-    uart_send_string("ERROR CAUGHT: ");
-    uart_send_string(entry_error_messages[type]);
-    uart_send_string(", ESR: TODO, Address: TODO \n");
+    mini_uart_send_string("ERROR CAUGHT: ");
+    mini_uart_send_string(entry_error_messages[type]);
+    mini_uart_send_string(", ESR: TODO, Address: TODO \n");
 }
 
 void enable_gic_distributor(u32 INTID)
@@ -65,27 +65,27 @@ void handle_irq()
             *((reg32*)GICC_EOIR) = IAR;
             break;
         case (VC_AUX_IRQ):
-            uart_send_string("Mini-UART Recv: ");
-            uart_send(uart_recv());
-            uart_send_string("\n");
+            mini_uart_send_string("Mini-UART Recv: ");
+            mini_uart_send(mini_uart_recv());
+            mini_uart_send_string("\n");
             *((reg32*)GICC_EOIR) = IAR;
             break;
         case (NS_PHYS_TIMER_IRQ):
             if (get_core() == 0)
-                uart_send_string("reset timer\n");
+                mini_uart_send_string("reset timer\n");
             handle_generic_timer();
             if (get_core() == 0)
-                uart_send_string("write back IAR\n");
+                mini_uart_send_string("write back IAR\n");
             *((reg32*)GICC_EOIR) = IAR;
             if (get_core() == 0) {
-                uart_send_string("core ");
-                uart_send(get_core() + '0');
-                uart_send_string(": generic timer interrupt\n");
-                uart_process(current);
+                mini_uart_send_string("core ");
+                mini_uart_send(get_core() + '0');
+                mini_uart_send_string(": generic timer interrupt\n");
+                mini_uart_process(current);
                 timer_tick();
             }
             break;
         default:
-            uart_send_string("unknown pending irq\n");
+            mini_uart_send_string("unknown pending irq\n");
     }
 }

@@ -22,11 +22,5 @@ void handle_sys_timer_1()
     cur_ls32_1 += interval_1;
     SYS_REGS_TIMER->compare[1] = cur_ls32_1;
     SYS_REGS_TIMER->countrol_status |= (1 << 1);
-    uart_send_string("timer 1 interrupt\n");
-    u64 sys_count = get_sys_count();
-    char printable[17];
-    u64_to_char_array(sys_count, printable);
-    printable[16] = '\0';
-    uart_send_string(printable);
-    uart_send_string("\n");
+    mini_uart_send_string("timer 1 interrupt\n");
 }
