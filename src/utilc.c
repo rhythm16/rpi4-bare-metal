@@ -1,3 +1,4 @@
+#include "utils.h"
 #include "types.h"
 #include "mini_uart.h"
 #include "sched.h"
@@ -16,25 +17,64 @@ void u64_to_char_array(u64 in, char *buf)
     }
 }
 
-void mini_uart_u64(u64 in)
+void char_to_char_array(char ch, char *buf)
+{
+    buf[0] = ch;
+}
+
+void main_output_char(int interface, char ch)
+{
+    char printable[2];
+    printable[1] = '\0';
+    char_to_char_array(ch, printable);
+    main_output(interface, printable);
+}
+
+void main_output(int interface, char* str)
+{
+    switch (interface) {
+        case (MU):
+            mini_uart_send_string(str);
+            break;
+        default:
+            main_output(MU, "main_output bad interface\n");
+            break;
+    }
+}
+
+void main_output_u64(int interface, u64 in)
 {
     char printable[17];
     printable[16] = '\0';
     u64_to_char_array(in, printable);
-    mini_uart_send_string(printable);
+    main_output(interface, printable);
 }
 
-void mini_uart_process(struct task_struct *p)
+void main_output_process(int interface, struct task_struct *p)
 {
-    mini_uart_send_string("task address: ");
-    mini_uart_u64((u64)p);
-    mini_uart_send_string(", state: ");
-    mini_uart_u64((u64)(p->state));
-    mini_uart_send_string(", counter: ");
-    mini_uart_u64((u64)(p->counter));
-    mini_uart_send_string(", priority: ");
-    mini_uart_u64((u64)(p->priority));
-    mini_uart_send_string(", preempt_count: ");
-    mini_uart_u64((u64)(p->preempt_count));
-    mini_uart_send_string("\n");
+    main_output(interface, "task address: ");
+    main_output_u64(interface, (u64)p);
+    main_output(interface, ", state: ");
+    main_output_u64(interface, (u64)(p->state));
+    main_output(interface, ", counter: ");
+    main_output_u64(interface, (u64)(p->counter));
+    main_output(interface, ", priority: ");
+    main_output_u64(interface, (u64)(p->priority));
+    main_output(interface, ", preempt_count: ");
+    main_output_u64(interface, (u64)(p->preempt_count));
+    main_output(interface, "\n");
 }
+
+
+char main_recv(int interface)
+{
+    switch (interface) {
+        case (MU):
+            return mini_uart_recv();
+            break;
+        default:
+            main_output(MU, "main_recv bad interface\n");
+            return '\0';
+    }
+}
+

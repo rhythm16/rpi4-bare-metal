@@ -1,5 +1,4 @@
 #include "types.h"
-#include "mini_uart.h"
 #include "peripherals/irq.h"
 #include "irq_numbers.h"
 #include "timer.h"
@@ -28,9 +27,9 @@ const char entry_error_messages[16][32] =
 
 void show_invalid_entry_message(u32 type, u64 esr, u64 address) 
 {
-    mini_uart_send_string("ERROR CAUGHT: ");
-    mini_uart_send_string(entry_error_messages[type]);
-    mini_uart_send_string(", ESR: TODO, Address: TODO \n");
+    main_output(MU, "ERROR CAUGHT: ");
+    main_output(MU, entry_error_messages[type]);
+    main_output(MU, ", ESR: TODO, Address: TODO \n");
 }
 
 void enable_gic_distributor(u32 INTID)
@@ -64,27 +63,27 @@ void handle_irq()
             *((reg32*)GICC_EOIR) = IAR;
             break;
         case (VC_AUX_IRQ):
-            mini_uart_send_string("Mini-UART Recv: ");
-            mini_uart_send(mini_uart_recv());
-            mini_uart_send_string("\n");
+            main_output(MU, "Mini-UART Recv: ");
+            main_output_char(MU, main_recv(MU));
+            main_output(MU, "\n");
             *((reg32*)GICC_EOIR) = IAR;
             break;
         case (NS_PHYS_TIMER_IRQ):
             if (get_core() == 0)
-                mini_uart_send_string("reset timer\n");
+                main_output(MU, "reset timer\n");
             handle_generic_timer();
             if (get_core() == 0)
-                mini_uart_send_string("write back IAR\n");
+                main_output(MU, "write back IAR\n");
             *((reg32*)GICC_EOIR) = IAR;
             if (get_core() == 0) {
-                mini_uart_send_string("core ");
-                mini_uart_send(get_core() + '0');
-                mini_uart_send_string(": generic timer interrupt\n");
-                mini_uart_process(current);
+                main_output(MU, "core ");
+                main_output_char(MU, get_core() + '0');
+                main_output(MU, ": generic timer interrupt\n");
+                main_output_process(MU, current);
                 timer_tick();
             }
             break;
         default:
-            mini_uart_send_string("unknown pending irq\n");
+            main_output(MU, "unknown pending irq\n");
     }
 }

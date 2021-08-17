@@ -1,5 +1,5 @@
 #include "peripherals/timer.h"
-#include "mini_uart.h"
+#include "utils.h"
 
 const u32 interval_1 = CLOCKHZ;
 u32 cur_ls32_1 = 0;
@@ -17,5 +17,5 @@ void handle_sys_timer_1()
     cur_ls32_1 += interval_1;
     SYS_REGS_TIMER->compare[1] = cur_ls32_1;
     SYS_REGS_TIMER->countrol_status |= (1 << 1);
-    mini_uart_send_string("timer 1 interrupt\n");
+    main_output(MU, "timer 1 interrupt\n");
 }

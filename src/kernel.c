@@ -13,8 +13,8 @@ reg32 state;
 void process(char *array)
 {
     while (1) {
-        mini_uart_send_string(array);
-        mini_uart_send_string("\n");
+        main_output(MU, array);
+        main_output(MU, "\n");
         delay(1000000);
     }
 }
@@ -37,17 +37,17 @@ void kernel_main(u64 id)
     while (state != id) {}
 
     /* output startup message and EL */
-    mini_uart_send_string("Bare Metal... (core ");
-    mini_uart_send(id + '0');
-    mini_uart_send_string(")\n");
+    main_output(MU, "Bare Metal... (core ");
+    main_output_char(MU, id + '0');
+    main_output(MU, ")\n");
     delay(30000);
-    mini_uart_send_string("EL: ");
-    mini_uart_send(get_el() + '0');
-    mini_uart_send_string("\n");
+    main_output(MU, "EL: ");
+    main_output_char(MU, get_el() + '0');
+    main_output(MU, "\n");
     /* also output the syscount */
     u64 sys_count = get_sys_count();
-    mini_uart_u64(sys_count);
-    mini_uart_send_string("\n");
+    main_output_u64(MU, sys_count);
+    main_output(MU, "\n");
 
     /* initialize exception vectors and timers and the timer interrupt */
     irq_init_vectors();
@@ -62,17 +62,17 @@ void kernel_main(u64 id)
         if (id != 0 || state != 4)
             continue;
         sched_init();
-        mini_uart_process(current);
+        main_output_process(MU, current);
         int res = copy_process((u64)&process, (u64)"task1");
         if (res != 0) {
-            mini_uart_send_string("fork error \n");
+            main_output(MU, "fork error \n");
         }
         res = copy_process((u64)&process, (u64)"task2");
         if (res != 0) {
-            mini_uart_send_string("fork error \n");
+            main_output(MU, "fork error \n");
         }
         while (1) {
-            mini_uart_send_string("init schedule..\n");
+            main_output(MU, "init schedule..\n");
             schedule();
         }
     }
