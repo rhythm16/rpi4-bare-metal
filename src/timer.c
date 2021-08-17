@@ -1,10 +1,5 @@
 #include "peripherals/timer.h"
-#include "peripherals/irq.h"
-#include "peripherals/aux.h"
-#include "irq_numbers.h"
 #include "mini_uart.h"
-#include "generic_timer.h"
-#include "utils.h"
 
 const u32 interval_1 = CLOCKHZ;
 u32 cur_ls32_1 = 0;

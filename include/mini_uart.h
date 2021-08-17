@@ -6,4 +6,4 @@ char mini_uart_recv();
 void mini_uart_send(char c);
 void mini_uart_send_string(char *str);
 
-#endif
+#endif /* MINI_UART_H */

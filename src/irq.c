@@ -2,7 +2,6 @@
 #include "mini_uart.h"
 #include "peripherals/irq.h"
 #include "irq_numbers.h"
-#include "peripherals/aux.h"
 #include "timer.h"
 #include "generic_timer.h"
 #include "utils.h"

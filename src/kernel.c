@@ -1,11 +1,9 @@
 /* Makefile's CFLAGS will take care of the include paths */
-#include "types.h"
 #include "mini_uart.h"
 #include "pl011_uart.h"
 #include "utils.h"
 #include "irq_numbers.h"
 #include "irq.h"
-#include "timer.h"
 #include "generic_timer.h"
 #include "fork.h"
 #include "sched.h"

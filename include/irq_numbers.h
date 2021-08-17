@@ -1,3 +1,6 @@
+#ifndef IRQ_NUMBERS_H 
+#define IRQ_NUMBERS_H
+
 /* vc irq numbers */
 enum gic_irqs
 {
@@ -8,3 +11,5 @@ enum gic_irqs
     VC_TIMER_IRQ_3    = 99,
     VC_AUX_IRQ        = 125
 };
+
+#endif /* IRQ_NUMBERS_H */

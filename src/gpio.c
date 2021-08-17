@@ -1,5 +1,4 @@
 #include "gpio.h"
-#include "utils.h"
 
 void gpio_pin_set_func(u8 pinNumber, GpioFunc func)
 {
