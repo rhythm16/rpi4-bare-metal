@@ -13,10 +13,11 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Use the GIC-400 as the interrupt controller
 - [x] Switch to using the ARM generic timer (with SMP)
 - [x] Lesson 04 (kernel threads & the scheduler)
+- [x] Exercise 1-2 (pl011-uart)
 
 ## What you need
 * Raspberry pi 4 model b
-* USB to TTL serial cable
+* USB to TTL serial cable x2
 * micro SD card
 * SD card reader for your development machine
 * terminal emulator which is able to select input source (I use `gtkterm`)
@@ -37,8 +38,8 @@ They all should not have trailing `/`s.
 ```
 6. Slot in the micro SD card then run `make deploy`, then umount the card, plug it into the PI4.
 7. Connect the USB-TTL cable like so:
-![](https://i.imgur.com/1ohtdeY.jpeg)
-8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` (you might have to add yourself the the `dialout` group).
+![](https://i.imgur.com/8pMcUbv.jpg)
+8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` and `gtkterm -p /dev/ttyUSB1 -s 115200` (you might have to add yourself the the `dialout` group).
 9. Power on the RPI4, you should see the output like:
 ```
 Bare Metal... (core 0)
@@ -57,12 +58,18 @@ task address: 0000000000082e40, state: 0000000000000000, counter: 00000000000000
 init schedule..
 task1
 task1
+task1
+...
+
 reset timer
 write back IAR
 core 0: generic timer interrupt
 task address: 0000000040000000, state: 0000000000000000, counter: 0000000000000001, priority: 0000000000000001, preempt_count: 0000000000000000
 task2
 task2
+task2
+...
+
 reset timer
 write back IAR
 core 0: generic timer interrupt
@@ -77,6 +84,12 @@ Mini-UART Recv: s
 Mini-UART Recv: f
 Mini-UART Recv: a
 ```
+
+11. The other output should be:
+```
+pl011-uart initialized
+```
+
 ## Caveats & Notes
 There are some problems/questions that I found during this:
 * Sergey said add `kernel_old=1` in `config.txt`, but it was the opposite, adding the line render it not working (Low level devel doesn't add it either). [This discussion](https://github.com/s-matyukevich/raspberry-pi-os/issues/206) says it is the issue of newer RPI firmware.
@@ -86,6 +99,7 @@ There are some problems/questions that I found during this:
 * The newer firmware also starts the secondary cpus different from what is said in lesson 01, check the [exercise 1-3 solution for RPI4](https://github.com/s-matyukevich/raspberry-pi-os/blob/master/exercises/lesson01/3/szediwy/src/boot.S) for reference.
 * The "functions" in assembly source files do not implement function prologues, be careful not to call functions within a function, otherwise the stack frames would be corrupted.
 * For some info on the GIC-400, see what I wrote [here](https://github.com/s-matyukevich/raspberry-pi-os/issues/237).
+* The baudrate setting of the PL011 UART was copied from the [exercise solutions](https://github.com/s-matyukevich/raspberry-pi-os/tree/master/exercises/lesson01/2), I don't know how it's calculated and is surprised that the value also works for the RPI4.
 
 ## Useful Links
 [bcm2711 peripherals datasheet](https://datasheets.raspberrypi.org/bcm2711/bcm2711-peripherals.pdf)

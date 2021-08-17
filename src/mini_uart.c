@@ -7,7 +7,7 @@
 
 void mini_uart_init()
 {
-    /* set pin 14 and 15 to UART1 (mini-uart) */
+    /* set gpio 14 and 15 to UART1 (mini-uart) */
     gpio_pin_set_func(TXD0, GFAlt5);
     gpio_pin_set_func(RXD0, GFAlt5);
     /* clear the pud resistors (initialize them) */

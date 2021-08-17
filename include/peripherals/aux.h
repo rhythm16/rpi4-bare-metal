@@ -5,7 +5,8 @@
 #include "peripherals/base.h"
 
 /* we only map the part for mini-uart */
-struct AuxRegs {
+struct AuxRegs
+{
     reg32 irq_status;
     reg32 enables;
     reg32 reserved[14];

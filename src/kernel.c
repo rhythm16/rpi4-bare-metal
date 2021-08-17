@@ -1,6 +1,7 @@
 /* Makefile's CFLAGS will take care of the include paths */
 #include "types.h"
 #include "mini_uart.h"
+#include "pl011_uart.h"
 #include "utils.h"
 #include "irq_numbers.h"
 #include "irq.h"
@@ -27,6 +28,11 @@ void kernel_main(u64 id)
         mini_uart_init();
         enable_interrupt_gic(VC_AUX_IRQ, id);
         state = 0;
+    }
+    /* core 3 initializes pl011-uart */
+    if (id == 3) {
+        pl011_uart_init();
+        pl011_uart_send_string("pl011-uart initialized\n");
     }
 
     /* hang then it's not your turn */
