@@ -21,7 +21,7 @@ clean :
 	rm -rf $(BUILD_DIR) *.img *.bin armstub/build
 
 # target in build dir, all files end in _c.o, showing they were created from a .c file
-# dependency is  in src, all the .c files
+# dependency is in src, all the .c files
 # $<: first dependency
 # $@: target
 $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
@@ -37,7 +37,7 @@ $(BUILD_DIR)/%_S.o: $(SRC_DIR)/%.S
 C_FILES = $(wildcard $(SRC_DIR)/*.c)
 ASM_FILES = $(wildcard $(SRC_DIR)/*.S)
 
-# this means to go through ever string in C_FILES and if it matches
+# this means to go through every string in C_FILES and if it matches
 # $(SRC_DIR)/%.c, change it to $(BUILD_DIR)/%_c.o
 OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
 OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%_S.o)
