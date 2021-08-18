@@ -1,6 +1,5 @@
 /* Makefile's CFLAGS will take care of the include paths */
 #include "mini_uart.h"
-#include "pl011_uart.h"
 #include "utils.h"
 #include "irq_numbers.h"
 #include "irq.h"
@@ -9,6 +8,7 @@
 #include "sched.h"
 
 #include "trace/trace_main.h"
+#include "trace/pl011_uart.h"
 
 reg32 state;
 

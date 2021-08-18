@@ -1,5 +1,5 @@
-#ifndef PL011_UART_H
-#define PL011_UART_H
+#ifndef TRACE_PL011_UART_H
+#define TRACE_PL011_UART_H
 
 void pl011_uart_init();
 char pl011_uart_recv();

@@ -2,7 +2,7 @@ ARM_GNU ?= /home/rhythm/x-tools/aarch64-rpi4-linux-gnu/bin/aarch64-rpi4-linux-gn
 SD_BOOT ?= /media/rhythm/BOOT
 FIRMWARE ?= /home/rhythm/project/rpi4-boot
 
-MAIN_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
+MAIN_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -fpatchable-function-entry=2
 TRACE_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
 MAIN_ASMFLAGS = -Iinclude
 

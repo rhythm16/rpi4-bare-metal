@@ -1,6 +1,6 @@
 #include "gpio.h"
 #include "peripherals/pl011_uart.h"
-#include "pl011_uart.h"
+#include "trace/pl011_uart.h"
 
 #define TXD4 8
 #define RXD4 9

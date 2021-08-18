@@ -1,4 +1,4 @@
-#include "pl011_uart.h"
+#include "trace/pl011_uart.h"
 #include "trace/utils.h"
 
 void trace_output(int interface, char *str)
