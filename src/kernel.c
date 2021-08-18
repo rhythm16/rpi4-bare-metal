@@ -8,6 +8,8 @@
 #include "fork.h"
 #include "sched.h"
 
+#include "trace/trace_main.h"
+
 reg32 state;
 
 void process(char *array)
@@ -27,10 +29,12 @@ void kernel_main(u64 id)
         enable_interrupt_gic(VC_AUX_IRQ, id);
         state = 0;
     }
-    /* core 3 initializes pl011-uart */
+    /* core 3 initializes pl011-uart and goes its own ways, without even setting up the interrupt table */
     if (id == 3) {
         pl011_uart_init();
         pl011_uart_send_string("pl011-uart initialized\n");
+        /* this does not return */
+        do_trace();
     }
 
     /* hang then it's not your turn */
@@ -59,7 +63,7 @@ void kernel_main(u64 id)
     state++;
 
     while (1) {
-        if (id != 0 || state != 4)
+        if (id != 0 || state != 3)
             continue;
         sched_init();
         main_output_process(MU, current);

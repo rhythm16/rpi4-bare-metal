@@ -7,7 +7,7 @@
 
 const char entry_error_messages[16][32] = 
 {
-    "SYNC_INVALID_EL1t", 
+    "SYNC_INVALID_EL1t",
     "IRQ_INVALID_EL1t",
     "FIQ_INVALID_EL1t",
     "SERROR_INVALID_EL1t",

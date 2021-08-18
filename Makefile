@@ -2,11 +2,16 @@ ARM_GNU ?= /home/rhythm/x-tools/aarch64-rpi4-linux-gnu/bin/aarch64-rpi4-linux-gn
 SD_BOOT ?= /media/rhythm/BOOT
 FIRMWARE ?= /home/rhythm/project/rpi4-boot
 
-CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
-ASMFLAGS = -Iinclude
+MAIN_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
+TRACE_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
+MAIN_ASMFLAGS = -Iinclude
 
-BUILD_DIR = build
-SRC_DIR = src
+MAIN_BUILD_DIR = main_build
+TRACE_BUILD_DIR = trace_build
+MAIN_SRC_DIR = src
+TRACE_SRC_DIR = src/trace
+
+LINK_SCRIPT = src/linker.ld
 
 define print_build
 	@echo ""
@@ -18,42 +23,49 @@ endef
 all : kernel8.img armstub8.bin
 
 clean :
-	rm -rf $(BUILD_DIR) *.img *.bin armstub/build
+	rm -rf $(MAIN_BUILD_DIR) $(TRACE_BUILD_DIR) *.img *.bin armstub/build
 
 # target in build dir, all files end in _c.o, showing they were created from a .c file
 # dependency is in src, all the .c files
 # $<: first dependency
 # $@: target
-$(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
+$(MAIN_BUILD_DIR)/%_c.o: $(MAIN_SRC_DIR)/%.c
 	$(call print_build, $@)
 	mkdir -p $(@D)
-	$(ARM_GNU)-gcc $(CFLAGS) -MMD -c $< -o $@
+	$(ARM_GNU)-gcc $(MAIN_CFLAGS) -MMD -c $< -o $@
 
-$(BUILD_DIR)/%_S.o: $(SRC_DIR)/%.S
+$(MAIN_BUILD_DIR)/%_S.o: $(MAIN_SRC_DIR)/%.S
 	$(call print_build, $@)
 	mkdir -p $(@D)
-	$(ARM_GNU)-gcc $(ASMFLAGS) -MMD -c $< -o $@
+	$(ARM_GNU)-gcc $(MAIN_ASMFLAGS) -MMD -c $< -o $@
 
-C_FILES = $(wildcard $(SRC_DIR)/*.c)
-ASM_FILES = $(wildcard $(SRC_DIR)/*.S)
+$(TRACE_BUILD_DIR)/%_c.o: $(TRACE_SRC_DIR)/%.c
+	$(call print_build, $@)
+	mkdir -p $(@D)
+	$(ARM_GNU)-gcc $(TRACE_CFLAGS) -MMD -c $< -o $@
 
-# this means to go through every string in C_FILES and if it matches
-# $(SRC_DIR)/%.c, change it to $(BUILD_DIR)/%_c.o
-OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
-OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%_S.o)
+MAIN_C_FILES = $(wildcard $(MAIN_SRC_DIR)/*.c)
+TRACE_C_FILES = $(wildcard $(TRACE_SRC_DIR)/*.c)
+ASM_FILES = $(wildcard $(MAIN_SRC_DIR)/*.S)
+
+# this means to go through every string in MAIN_C_FILES and if it matches
+# $(MAIN_SRC_DIR)/%.c, change it to $(MAIN_BUILD_DIR)/%_c.o
+OBJ_FILES = $(MAIN_C_FILES:$(MAIN_SRC_DIR)/%.c=$(MAIN_BUILD_DIR)/%_c.o)
+OBJ_FILES += $(TRACE_C_FILES:$(TRACE_SRC_DIR)/%.c=$(TRACE_BUILD_DIR)/%_c.o)
+OBJ_FILES += $(ASM_FILES:$(MAIN_SRC_DIR)/%.S=$(MAIN_BUILD_DIR)/%_S.o)
 
 DEP_FILES = $(OBJ_FILES:%.o=%.d)
 -include $(DEP_FILES)
 
-kernel8.img: $(SRC_DIR)/linker.ld $(OBJ_FILES)
+kernel8.img: $(LINK_SCRIPT) $(OBJ_FILES)
 	$(call print_build, $@)
-	$(ARM_GNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/kernel8.elf $(OBJ_FILES)
-	$(ARM_GNU)-objcopy $(BUILD_DIR)/kernel8.elf -O binary $@
+	$(ARM_GNU)-ld -T $(LINK_SCRIPT) -o $(MAIN_BUILD_DIR)/kernel8.elf $(OBJ_FILES)
+	$(ARM_GNU)-objcopy $(MAIN_BUILD_DIR)/kernel8.elf -O binary $@
 
 armstub/build/armstub8_S.o: armstub/src/armstub8.S
 	$(call print_build, $@)
 	mkdir -p $(@D)
-	$(ARM_GNU)-gcc $(CFLAGS) -MMD -c $< -o $@
+	$(ARM_GNU)-gcc $(MAIN_CFLAGS) -MMD -c $< -o $@
 
 armstub8.bin: armstub/build/armstub8_S.o
 	$(call print_build, $@)
