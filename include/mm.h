@@ -23,6 +23,9 @@ void memzero(unsigned long src, unsigned int n);
 u64 get_free_page();
 void free_page(u64 p);
 
+extern u64 _start;
+#define KERNEL_START &(_start)
+
 #endif /* __ASSEMBLER__ */
 
 #endif /* MM_H */

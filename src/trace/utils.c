@@ -12,3 +12,4 @@ void trace_output(int interface, char *str)
             break;
     }
 }
+

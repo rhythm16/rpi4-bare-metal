@@ -6,6 +6,7 @@
 #include "generic_timer.h"
 #include "fork.h"
 #include "sched.h"
+#include "mm.h"
 
 #include "trace/trace_main.h"
 #include "trace/pl011_uart.h"
