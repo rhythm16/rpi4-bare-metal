@@ -34,6 +34,7 @@ void kernel_main(u64 id)
     if (id == 3) {
         pl011_uart_init();
         pl011_uart_send_string("pl011-uart initialized\n");
+        trace_init();
         /* this does not return */
         do_trace();
     }
