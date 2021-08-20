@@ -14,6 +14,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Switch to using the ARM generic timer (with SMP)
 - [x] Lesson 04 (kernel threads & the scheduler)
 - [x] Exercise 1-2 (pl011-uart)
+- [ ] Basic Ftrace (in progress)
 
 ## What you need
 * Raspberry pi 4 model b
@@ -40,7 +41,7 @@ They all should not have trailing `/`s.
 7. Connect the USB-TTL cable like so:
 ![](https://i.imgur.com/8pMcUbv.jpg)
 8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` and `gtkterm -p /dev/ttyUSB1 -s 115200` (you might have to add yourself the the `dialout` group).
-9. Power on the RPI4, you should see the output like:
+9. Power on the RPI4, you should see the output like: (out of date, will update later)
 ```
 Bare Metal... (core 0)
 EL: 1

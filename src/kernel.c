@@ -27,20 +27,14 @@ void kernel_main(u64 id)
     /* core 0 initializes mini-uart and handles uart interrupts */
     if (id == 0) {
         mini_uart_init();
+        pl011_uart_init();
         enable_interrupt_gic(VC_AUX_IRQ, id);
+        trace_init();
         state = 0;
     }
-    /* core 3 initializes pl011-uart and goes its own ways, without even setting up the interrupt table */
-    if (id == 3) {
-        pl011_uart_init();
-        pl011_uart_send_string("pl011-uart initialized\n");
-        trace_init();
-        /* this does not return */
-        do_trace();
-    }
 
-    /* hang then it's not your turn */
-    while (state != id) {}
+    /* single core for now */
+    while (id != 0) {}
 
     /* output startup message and EL */
     main_output(MU, "Bare Metal... (core ");
@@ -65,7 +59,7 @@ void kernel_main(u64 id)
     state++;
 
     while (1) {
-        if (id != 0 || state != 3)
+        if (id != 0 || state != 1)
             continue;
         sched_init();
         main_output_process(MU, current);

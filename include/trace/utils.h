@@ -12,6 +12,7 @@ void trace_char_to_char_array(char ch, char *buf);
 void trace_output_char(int interface, char ch);
 void trace_output_u64(int interface, u64 in);
 void trace_output_process(int interface, struct task_struct *p);
+void trace_output_insn(int interface, u64 addr);
 char trace_recv(int interface);
 
 #endif /* TRACE_UTILS_H */

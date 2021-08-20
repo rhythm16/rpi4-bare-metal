@@ -65,6 +65,15 @@ void trace_output_process(int interface, struct task_struct *p)
     trace_output(interface, "\n");
 }
 
+void trace_output_insn(int interface, u64 addr)
+{
+    addr = addr & (~0x7);
+    trace_output(interface, "instruction address: ");
+    trace_output_u64(interface, addr);
+    trace_output(interface, ", instruction: ");
+    trace_output_u64(interface, *((u64 *)addr));
+    trace_output(interface, "\n");
+}
 
 char trace_recv(int interface)
 {
