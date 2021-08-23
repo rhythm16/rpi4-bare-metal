@@ -11,6 +11,7 @@ SECTIONS
     }
     __stop_patchable_functions = .;
     . = ALIGN(0x8);
+    ksyms = .;
     symbols : {
         KEEP(*(_symbols))
     }

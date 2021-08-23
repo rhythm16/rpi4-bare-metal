@@ -25,6 +25,7 @@ all : kernel8.img armstub8.bin
 
 clean :
 	rm -rf $(MAIN_BUILD_DIR) $(TRACE_BUILD_DIR) *.img *.bin armstub/build
+	scripts/clear_syms.py
 
 # target in build dir, all files end in _c.o, showing they were created from a .c file
 # dependency is in src, all the .c files

@@ -37,7 +37,7 @@ SD_BOOT: path to the FAT32 partition mounted on your development machine
 FIRMWARE: path to the directory containing the 4 files\
 They all should not have trailing `/`s.
 ```
-6. Slot in the micro SD card then run `make deploy`, then umount the card, plug it into the PI4.
+6. Slot in the micro SD card then run `./build.sh`, then umount the card, plug it into the PI4.
 7. Connect the USB-TTL cable like so:
 ![](https://i.imgur.com/8pMcUbv.jpg)
 8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` and `gtkterm -p /dev/ttyUSB1 -s 115200` (you might have to add yourself the the `dialout` group).
