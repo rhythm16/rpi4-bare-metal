@@ -11,6 +11,10 @@ SECTIONS
     }
     __stop_patchable_functions = .;
     . = ALIGN(0x8);
+    symbols : {
+        KEEP(*(_symbols))
+    }
+    . = ALIGN(0x8);
     bss_begin = .;
     .bss : { *(.bss*) }
     bss_end = .;
