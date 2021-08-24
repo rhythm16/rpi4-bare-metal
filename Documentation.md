@@ -17,6 +17,7 @@ Short for kernel symbols, used by tracing, main purpose is to be able to transla
 ## Concerns (nasty stuff)
 * `syms_values.symbol_area_file` has to be under the `src/` directory
 * Is `bss_end` section close to the limit of the `adr` instruction at the start of the booting process?
+* There are two copies of output formating code for MiniUART and PL011UART
 
 ## Tools used on development machine
 * `nm` (both native and cross compiling version should work)

@@ -14,7 +14,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Switch to using the ARM generic timer (with SMP)
 - [x] Lesson 04 (kernel threads & the scheduler)
 - [x] Exercise 1-2 (pl011-uart)
-- [ ] Basic Ftrace (in progress)
+- [x] Basic Ftrace (works, but lack configurability and slow :) )
 
 ## What you need
 * Raspberry pi 4 model b

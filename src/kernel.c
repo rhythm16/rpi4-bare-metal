@@ -10,6 +10,7 @@
 
 #include "trace/trace_main.h"
 #include "trace/pl011_uart.h"
+#include "trace/ksyms.h"
 
 reg32 state;
 
@@ -29,6 +30,7 @@ void kernel_main(u64 id)
         mini_uart_init();
         pl011_uart_init();
         enable_interrupt_gic(VC_AUX_IRQ, id);
+        ksyms_init();
         trace_init();
         state = 0;
     }

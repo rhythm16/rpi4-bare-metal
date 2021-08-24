@@ -19,6 +19,7 @@ hook:
     stp x29, x30,  [sp, #16 * 5]
 
     /* prepare arguments and call into C */
+    mov x0, x30
     bl traced
     
     /* restore function arguments and fp, although the fp shouldn't change */
