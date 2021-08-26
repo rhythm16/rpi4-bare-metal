@@ -9,6 +9,7 @@
 
 #define NR_TASKS          64
 #define TASK_RUNNING      0
+#define TASK_ZOMBIE       1
 
 extern struct task_struct *current;
 extern struct task_struct *task[NR_TASKS];
@@ -38,6 +39,8 @@ struct task_struct
     long counter;
     long priority;
     long preempt_count;
+    u64 user_stack_page;
+    u64 flags;
 };
 
 void core_switch_to(struct task_struct *prev, struct task_struct *next);
@@ -47,6 +50,7 @@ void _schedule();
 void schedule();
 void switch_to(struct task_struct *next);
 void timer_tick();
+void exit_process();
 void sched_init();
 
 #define INIT_TASK \

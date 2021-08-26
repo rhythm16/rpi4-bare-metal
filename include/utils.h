@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "sched.h"
+#include "fork.h"
 
 #define MU 0
 
@@ -21,5 +22,7 @@ void main_output_u64(int interface, u64 in);
 void main_output(int interface, char* str);
 void main_output_char(int interface, char ch);
 char main_recv(int interface);
+
+void copy_ke_regs(struct ke_regs * to, struct ke_regs * from);
 
 #endif /* UTILS_H */

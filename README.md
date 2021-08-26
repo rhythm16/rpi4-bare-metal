@@ -15,6 +15,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Lesson 04 (kernel threads & the scheduler)
 - [x] Exercise 1-2 (pl011-uart)
 - [x] Basic Ftrace (works, but lack configurability and slow :) )
+- [x] Lesson 05 (user mode and system calls)
 
 ## What you need
 * Raspberry pi 4 model b
@@ -101,6 +102,7 @@ There are some problems/questions that I found during this:
 * The "functions" in assembly source files do not implement function prologues, be careful not to call functions within a function, otherwise the stack frames would be corrupted.
 * For some info on the GIC-400, see what I wrote [here](https://github.com/s-matyukevich/raspberry-pi-os/issues/237).
 * The baudrate setting of the PL011 UART was copied from the [exercise solutions](https://github.com/s-matyukevich/raspberry-pi-os/tree/master/exercises/lesson01/2), I don't know how it's calculated and is surprised that the value also works for the RPI4.
+* The tutorial assumes the kernel is loaded at physical address 0, so statically initialized pointer values e.g. `current`, `sys_call_table` will be correct, however if this is not the case, a relocation must be performed before using those values.
 
 ## Useful Links
 [bcm2711 peripherals datasheet](https://datasheets.raspberrypi.org/bcm2711/bcm2711-peripherals.pdf)

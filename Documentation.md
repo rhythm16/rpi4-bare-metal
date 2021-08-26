@@ -2,6 +2,9 @@
 
 ## Design
 
+### User space
+Because we don't have storage support, the only way for user programs to work is to link it inside the kernel image, but this also causes the ksyms to include symbols in user space. Later on it might be possible to compile kernel and user code separately, stick them together raw, and load it as the "kernel image".
+
 ### Tracing
 
 ## Ksyms

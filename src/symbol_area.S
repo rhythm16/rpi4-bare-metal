@@ -1,2 +1,2 @@
 .section "_symbols", "a"
-.space 8192
+.space 16384

@@ -7,20 +7,26 @@
 #include "fork.h"
 #include "sched.h"
 #include "mm.h"
+#include "sys.h"
 
 #include "trace/trace_main.h"
 #include "trace/pl011_uart.h"
 #include "trace/ksyms.h"
 
+#include "user_space/init.h"
+
 reg32 state;
 
-void process(char *array)
+/* run by pid 1, will ret back to entry.S and do a kernel_exit 0 */
+void kernel_process()
 {
-    while (1) {
-        main_output(MU, array);
-        main_output(MU, "\n");
-        delay(1000000);
-    }
+    main_output(MU, "pid 1 started in EL");
+    main_output_char(MU, get_el() + '0');
+    main_output(MU, "\n");
+
+    int err = prepare_move_to_user((u64)user_process);
+    if (err < 0)
+        main_output(MU, "Failed to move to user mode!\n");
 }
 
 void kernel_main(u64 id)
@@ -31,6 +37,7 @@ void kernel_main(u64 id)
         pl011_uart_init();
         enable_interrupt_gic(VC_AUX_IRQ, id);
         ksyms_init();
+        sys_call_table_relocate();
         trace_init();
         state = 0;
     }
@@ -65,13 +72,10 @@ void kernel_main(u64 id)
             continue;
         sched_init();
         main_output_process(MU, current);
-        int res = copy_process((u64)&process, (u64)"task1");
-        if (res != 0) {
-            main_output(MU, "fork error \n");
-        }
-        res = copy_process((u64)&process, (u64)"task2");
-        if (res != 0) {
-            main_output(MU, "fork error \n");
+        /* create pid 1, kernel threads don't need a user stack page */
+        int res = copy_process(KTHREAD, (u64)&kernel_process, 0, 0);
+        if (res <= 0) {
+            main_output(MU, "fork error\n");
         }
         while (1) {
             main_output(MU, "init schedule..\n");
@@ -79,3 +83,4 @@ void kernel_main(u64 id)
         }
     }
 }
+

@@ -78,3 +78,13 @@ char main_recv(int interface)
     }
 }
 
+void copy_ke_regs(struct ke_regs * to, struct ke_regs * from)
+{
+    for (int i = 0; i < 31; i++) {
+        to->regs[i] = from->regs[i];
+    }
+    to->sp = from->sp;
+    to->elr = from->elr;
+    to->pstate = from->pstate;
+}
+

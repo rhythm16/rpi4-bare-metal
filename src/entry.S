@@ -1,7 +1,8 @@
 #include "entry.h"
+#include "sysregs.h"
+#include "sys.h"
 
-/* sp here should be SP_EL1 */
-.macro kernel_entry
+.macro kernel_entry, el
     sub sp, sp,   #S_FRAME_SIZE
     stp x0, x1,   [sp, #16 * 0]
     stp x2, x3,   [sp, #16 * 1]
@@ -19,16 +20,34 @@
     stp x26, x27, [sp, #16 * 13]
     stp x28, x29, [sp, #16 * 14]
 
+    /*
+     * we have to save sp_el0 on the kernel stack because
+     * we may context switch
+     */
+    .if  \el == 0
+    mrs x21, sp_el0
+    .else
+    add x21, sp, #S_FRAME_SIZE
+    .endif /* \el == 0 */
+
     mrs x22, elr_el1
     mrs x23, spsr_el1
 
-    stp x30, x22, [sp, #16 * 15]
-    str x23,      [sp, #16 * 16]
+    stp x30, x21, [sp, #16 * 15]
+    stp x22, x23, [sp, #16 * 16]
 .endm
 
-.macro kernel_exit
-    ldr x23,      [sp, #16 * 16]
-    ldp x30, x22, [sp, #16 * 15]
+.macro kernel_exit, el
+    ldp x22, x23, [sp, #16 * 16]
+    ldp x30, x21, [sp, #16 * 15]
+
+    /* 
+     * we don't have to restore sp if el == 1 because 
+     * core_switch_to helps us with that
+     */
+    .if  \el == 0
+    msr sp_el0, x21
+    .endif /* \el == 0 */
 
     msr elr_el1, x22
     msr spsr_el1, x23
@@ -66,12 +85,12 @@ vectors:
     ventry serror_invalid_el1t
 
     ventry sync_invalid_el1h
-    ventry handle_el1h_irq
+    ventry handle_irq_el1h
     ventry fiq_invalid_el1h
     ventry serror_invalid_el1h
 
-    ventry sync_invalid_el0_64
-    ventry irq_invalid_el0_64
+    ventry handle_sync_el0_64
+    ventry handle_irq_el0_64
     ventry fiq_invalid_el0_64
     ventry serror_invalid_el0_64
 
@@ -80,8 +99,8 @@ vectors:
     ventry fiq_invalid_el0_32
     ventry serror_invalid_el0_32
 
-.macro handle_invalid_entry type
-    kernel_entry
+.macro handle_invalid_entry el, type
+    kernel_entry \el
     mov x0, #\type
     mrs x1, esr_el1
     mrs x2, elr_el1
@@ -90,63 +109,115 @@ vectors:
 .endm
 
 sync_invalid_el1t:
-    handle_invalid_entry  SYNC_INVALID_EL1t
+    handle_invalid_entry 1, SYNC_INVALID_EL1t
 
 irq_invalid_el1t:
-    handle_invalid_entry  IRQ_INVALID_EL1t
+    handle_invalid_entry 1, IRQ_INVALID_EL1t
 
 fiq_invalid_el1t:
-    handle_invalid_entry  FIQ_INVALID_EL1t
+    handle_invalid_entry 1, FIQ_INVALID_EL1t
 
 serror_invalid_el1t:
-    handle_invalid_entry  SERROR_INVALID_EL1t
+    handle_invalid_entry 1, SERROR_INVALID_EL1t
 
 sync_invalid_el1h:
-    handle_invalid_entry  SYNC_INVALID_EL1h
+    handle_invalid_entry 1, SYNC_INVALID_EL1h
 
 irq_invalid_el1h:
-    handle_invalid_entry  IRQ_INVALID_EL1h
+    handle_invalid_entry 1, IRQ_INVALID_EL1h
 
 fiq_invalid_el1h:
-    handle_invalid_entry  FIQ_INVALID_EL1h
+    handle_invalid_entry 1, FIQ_INVALID_EL1h
 
 serror_invalid_el1h:
-    handle_invalid_entry  SERROR_INVALID_EL1h
+    handle_invalid_entry 1, SERROR_INVALID_EL1h
 
 sync_invalid_el0_64:
-    handle_invalid_entry  SYNC_INVALID_EL0_64
+    handle_invalid_entry 0, SYNC_INVALID_EL0_64
 
 irq_invalid_el0_64:
-    handle_invalid_entry  IRQ_INVALID_EL0_64
+    handle_invalid_entry 0, IRQ_INVALID_EL0_64
 
 fiq_invalid_el0_64:
-    handle_invalid_entry  FIQ_INVALID_EL0_64
+    handle_invalid_entry 0, FIQ_INVALID_EL0_64
 
 serror_invalid_el0_64:
-    handle_invalid_entry  SERROR_INVALID_EL0_64
+    handle_invalid_entry 0, SERROR_INVALID_EL0_64
 
 sync_invalid_el0_32:
-    handle_invalid_entry  SYNC_INVALID_EL0_32
+    handle_invalid_entry 0, SYNC_INVALID_EL0_32
 
 irq_invalid_el0_32:
-    handle_invalid_entry  IRQ_INVALID_EL0_32
+    handle_invalid_entry 0, IRQ_INVALID_EL0_32
 
 fiq_invalid_el0_32:
-    handle_invalid_entry  FIQ_INVALID_EL0_32
+    handle_invalid_entry 0, FIQ_INVALID_EL0_32
 
 serror_invalid_el0_32:
-    handle_invalid_entry  SERROR_INVALID_EL0_32
+    handle_invalid_entry 0, SERROR_INVALID_EL0_32
 
-handle_el1h_irq:
-    kernel_entry
+handle_irq_el1h:
+    kernel_entry 1
     bl handle_irq
-    kernel_exit
+    kernel_exit 1
+
+handle_irq_el0_64:
+    kernel_entry 0
+    bl handle_irq
+    kernel_exit 0
+
+handle_sync_el0_64:
+    kernel_entry 0
+    /* check esr_el1 if it is indeed svc */
+    mrs x25, esr_el1
+    lsr x24, x25, #ESR_ELx_EC_SHIFT
+    cmp x24, #ESR_ELx_EC_SVC64
+    b.eq el0_svc
+    handle_invalid_entry 0, SYNC_ERROR
+
+/*
+ * x25 = NR_SYSCALLS
+ * x26 = syscall number
+ * x27 = sys_call_table 
+ */ 
+
+el0_svc:
+    adr x27, sys_call_table
+    /* zero extend the syscall number */
+    uxtw x26, w8
+    mov x25, #NR_SYSCALLS
+    bl irq_enable
+    cmp x26, x25
+    /* branch if syscall number >= NR_SYSCALLS */ 
+    b.hs invalid_syscall_num
+    /* call syscall */
+    ldr x16, [x27, x26, lsl #3]
+    blr x16
+    b ret_from_syscall
+
+invalid_syscall_num:
+    handle_invalid_entry 0, SYSCALL_ERROR
+
+ret_from_syscall:
+    bl irq_disable
+    /*
+     * store the return value of the syscall on the stack so 
+     * kernel_exit will pop it back to x0
+     */
+    str x0, [sp, 0]
+    kernel_exit 0
 
 .globl ret_from_fork
 ret_from_fork:
     bl preempt_enable
+    /* x19 == 0 means we're cloning */
+    cbz x19, ret_to_user
     mov x0, x20
     blr x19
+
+ret_to_user:
+    bl irq_disable
+    kernel_exit 0
 
 .globl err_hang
 err_hang: b err_hang

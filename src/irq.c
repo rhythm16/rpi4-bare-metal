@@ -5,7 +5,7 @@
 #include "generic_timer.h"
 #include "utils.h"
 
-const char entry_error_messages[16][32] = 
+const char entry_error_messages[18][32] = 
 {
     "SYNC_INVALID_EL1t",
     "IRQ_INVALID_EL1t",
@@ -22,14 +22,20 @@ const char entry_error_messages[16][32] =
     "SYNC_INVALID_EL0_32", 
     "IRQ_INVALID_EL0_32",
     "FIQ_INVALID_EL0_32",
-    "SERROR_INVALID_EL0_32"
+    "SERROR_INVALID_EL0_32",
+    "SYNC_ERROR",
+    "SYSCALL_ERROR"
 };
 
 void show_invalid_entry_message(u32 type, u64 esr, u64 address) 
 {
     main_output(MU, "ERROR CAUGHT: ");
     main_output(MU, entry_error_messages[type]);
-    main_output(MU, ", ESR: TODO, Address: TODO \n");
+    main_output(MU, ", ESR: ");
+    main_output_u64(MU, esr);
+    main_output(MU, ", Address: ");
+    main_output_u64(MU, address);
+    main_output(MU, "\n");
 }
 
 void enable_gic_distributor(u32 INTID)
@@ -69,11 +75,7 @@ void handle_irq()
             *((reg32*)GICC_EOIR) = IAR;
             break;
         case (NS_PHYS_TIMER_IRQ):
-            if (get_core() == 0)
-                main_output(MU, "reset timer\n");
             handle_generic_timer();
-            if (get_core() == 0)
-                main_output(MU, "write back IAR\n");
             *((reg32*)GICC_EOIR) = IAR;
             if (get_core() == 0) {
                 main_output(MU, "core ");
@@ -87,3 +89,4 @@ void handle_irq()
             main_output(MU, "unknown pending irq\n");
     }
 }
+

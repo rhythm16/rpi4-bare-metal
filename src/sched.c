@@ -1,6 +1,6 @@
 #include "sched.h"
 #include "irq.h"
-#include "utils.h"
+#include "mm.h"
 
 static struct task_struct init_task = INIT_TASK;
 struct task_struct *current = 0;
@@ -74,8 +74,19 @@ void timer_tick()
     irq_disable();
 }
 
+void exit_process()
+{
+    preempt_disable();
+    current->state = TASK_ZOMBIE;
+    if (current->user_stack_page)
+        free_page(current->user_stack_page);
+    preempt_enable();
+    schedule();
+}
+
 void sched_init()
 {
     current = &init_task;
     task[0] = current;
 }
+

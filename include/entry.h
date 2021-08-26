@@ -21,6 +21,9 @@
 #define FIQ_INVALID_EL0_32      14
 #define SERROR_INVALID_EL0_32   15
 
+#define SYNC_ERROR              16
+#define SYSCALL_ERROR           17
+
 #define S_FRAME_SIZE            272
 
 #ifndef __ASSEMBLER__

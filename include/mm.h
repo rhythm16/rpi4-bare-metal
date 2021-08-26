@@ -19,7 +19,7 @@
 
 #include "types.h"
 
-void memzero(unsigned long src, unsigned int n);
+void memzero(u64 src, unsigned int n);
 u64 get_free_page();
 void free_page(u64 p);
 

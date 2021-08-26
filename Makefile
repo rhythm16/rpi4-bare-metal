@@ -4,13 +4,17 @@ FIRMWARE ?= /home/rhythm/project/rpi4-boot
 
 MAIN_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -fpatchable-function-entry=2
 TRACE_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
+USER_CFLAGS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude
 MAIN_ASMFLAGS = -Iinclude
 TRACE_ASMFLAGS = -Iinclude
+USER_ASMFLAGS = -Iinclude
 
 MAIN_BUILD_DIR = main_build
 TRACE_BUILD_DIR = trace_build
+USER_BUILD_DIR = user_build
 MAIN_SRC_DIR = src
 TRACE_SRC_DIR = src/trace
+USER_SRC_DIR = user_space
 
 LINK_SCRIPT = src/linker.ld
 
@@ -24,7 +28,7 @@ endef
 all : kernel8.img armstub8.bin
 
 clean :
-	rm -rf $(MAIN_BUILD_DIR) $(TRACE_BUILD_DIR) *.img *.bin armstub/build
+	rm -rf $(MAIN_BUILD_DIR) $(TRACE_BUILD_DIR) $(USER_BUILD_DIR) *.img *.bin armstub/build
 	scripts/clear_syms.py
 
 # target in build dir, all files end in _c.o, showing they were created from a .c file
@@ -51,17 +55,31 @@ $(TRACE_BUILD_DIR)/%_S.o: $(TRACE_SRC_DIR)/%.S
 	mkdir -p $(@D)
 	$(ARM_GNU)-gcc $(TRACE_ASMFLAGS) -MMD -c $< -o $@
 
+$(USER_BUILD_DIR)/%_c.o: $(USER_SRC_DIR)/%.c
+	$(call print_build, $@)
+	mkdir -p $(@D)
+	$(ARM_GNU)-gcc $(USER_CFLAGS) -MMD -c $< -o $@
+
+$(USER_BUILD_DIR)/%_S.o: $(USER_SRC_DIR)/%.S
+	$(call print_build, $@)
+	mkdir -p $(@D)
+	$(ARM_GNU)-gcc $(USER_ASMFLAGS) -MMD -c $< -o $@
+
 MAIN_C_FILES = $(wildcard $(MAIN_SRC_DIR)/*.c)
 TRACE_C_FILES = $(wildcard $(TRACE_SRC_DIR)/*.c)
+USER_C_FILES = $(wildcard $(USER_SRC_DIR)/*.c)
 MAIN_ASM_FILES = $(wildcard $(MAIN_SRC_DIR)/*.S)
 TRACE_ASM_FILES = $(wildcard $(TRACE_SRC_DIR)/*.S)
+USER_ASM_FILES = $(wildcard $(USER_SRC_DIR)/*.S)
 
 # this means to go through every string in MAIN_C_FILES and if it matches
 # $(MAIN_SRC_DIR)/%.c, change it to $(MAIN_BUILD_DIR)/%_c.o
 OBJ_FILES = $(MAIN_C_FILES:$(MAIN_SRC_DIR)/%.c=$(MAIN_BUILD_DIR)/%_c.o)
 OBJ_FILES += $(TRACE_C_FILES:$(TRACE_SRC_DIR)/%.c=$(TRACE_BUILD_DIR)/%_c.o)
+OBJ_FILES += $(USER_C_FILES:$(USER_SRC_DIR)/%.c=$(USER_BUILD_DIR)/%_c.o)
 OBJ_FILES += $(MAIN_ASM_FILES:$(MAIN_SRC_DIR)/%.S=$(MAIN_BUILD_DIR)/%_S.o)
 OBJ_FILES += $(TRACE_ASM_FILES:$(TRACE_SRC_DIR)/%.S=$(TRACE_BUILD_DIR)/%_S.o)
+OBJ_FILES += $(USER_ASM_FILES:$(USER_SRC_DIR)/%.S=$(USER_BUILD_DIR)/%_S.o)
 
 DEP_FILES = $(OBJ_FILES:%.o=%.d)
 -include $(DEP_FILES)

@@ -37,6 +37,9 @@
 #define SPSR_EL3_VAL \
     (SPSR_EL3_D | SPSR_EL3_A | SPSR_EL3_I | SPSR_EL3_F | SPSR_EL3_MODE_EL1H)
 
+/* Holds the saved process state when an exception is taken to EL1 */
+#define SPSR_EL1_MODE_EL0t  0  // AArch64 Exception level and selected Stack Pointer, 0 is EL.0t.
+
 /* name for L2CTLR_EL1 is S3_1_C11_C0_2 in Aarch64 */
 #define L2CTLR_EL1		S3_1_C11_C0_2
 
@@ -58,5 +61,9 @@
 #define CPACR_EL1_FPEN    BIT(21) | BIT(20) // don't trap SIMD/FP registers
 #define CPACR_EL1_ZEN     BIT(17) | BIT(16)  // don't trap SVE instructions
 #define CPACR_EL1_VAL     (CPACR_EL1_FPEN | CPACR_EL1_ZEN)
+
+/* exception syndrome register EL1 (ESR_EL1) */
+#define ESR_ELx_EC_SHIFT 26
+#define ESR_ELx_EC_SVC64 0x15
 
 #endif /* SYSREGS_H */
