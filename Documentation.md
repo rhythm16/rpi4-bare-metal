@@ -6,7 +6,9 @@
 
 ### RPi4 Physical Memory Layout
 0x40000000 - 0xFC000000 (1G ~ 3G960M) free
+
 0x38400000 - 0x40000000 (948M ~ 1G) VC used
+
 0x00000000 - 0x38400000 (0 ~ 948M) free
 
 ### Physical Memory Dynamic Allocation
