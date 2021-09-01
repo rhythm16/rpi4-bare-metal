@@ -21,6 +21,10 @@ master: /* entry point of the primary core */
     /* branch and link, x30 is set to the address of the next instruction */
     bl memzero
     bl wake_up_cores
+    /* save kernel pa base */
+    adr x0, _start
+    adr x1, KERNEL_PA_BASE
+    str x0, [x1]
     /* we are core 0 */
     mov x0, #0
     bl kernel_main

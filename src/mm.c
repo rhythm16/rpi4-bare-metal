@@ -1,6 +1,8 @@
 #include "mm.h"
 #include "types.h"
 
+u64 KERNEL_PA_BASE;
+
 static u8 mem_map[MALLOC_PAGES] = {0, };
 
 u64 get_free_page()

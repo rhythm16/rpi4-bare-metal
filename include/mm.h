@@ -15,6 +15,8 @@
 #define MALLOC_PAGES (MALLOC_SIZE / PAGE_SIZE)
 #define THREAD_SIZE  PAGE_SIZE
 
+#define LINEAR_MAP_BASE 0xffff000000000000
+
 #ifndef __ASSEMBLER__
 
 #include "types.h"
@@ -25,6 +27,8 @@ void free_page(u64 p);
 
 extern u64 _start;
 #define KERNEL_START (&(_start))
+
+extern u64 KERNEL_PA_BASE;
 
 #endif /* __ASSEMBLER__ */
 
