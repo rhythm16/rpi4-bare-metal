@@ -111,10 +111,8 @@ _start:
     mov x0, #CPUECTLR_EL1_SMPEN
     msr CPUECTLR_EL1, x0
 
-#define GIC
-#ifdef GIC
-        bl      setup_gic
-#endif
+    bl      setup_gic
+
     /*
      * Set up SCTLR_EL2
      * All set bits below are res1. LE, no WXN/I/SA/C/A/M
@@ -199,8 +197,6 @@ boot_kernel:
     mov x3, #0
     br x4
 
-#ifdef GIC
-
 setup_gic:              // Called from secure mode - set all interrupts to group 1 and enable.
     mrs x0, MPIDR_EL1
     ldr x2, =GIC_DISTB
@@ -223,8 +219,6 @@ setup_gic:              // Called from secure mode - set all interrupts to group
     str w1, [x2, x0]
     b.ne    3b
     ret
-
-#endif
 
 .globl dtb_space
 dtb_space:
