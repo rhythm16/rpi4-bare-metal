@@ -28,13 +28,13 @@
 #define MATTR_NORMAL_NC            0x44
 #define MATTR_DEVICE_nGnRnE_INDEX  0
 #define MATTR_NORMAL_NC_INDEX      1
-#define MAIR_VALUE_EL1_VALUE       ((MATTR_NORMAL_NC << (8 * MATTR_NORMAL_NC_INDEX)) | MATTR_DEVICE_nGnRnE << (8 * MATTR_DEVICE_nGnRnE_INDEX))
+#define MAIR_EL1_VAL               ((MATTR_NORMAL_NC << (8 * MATTR_NORMAL_NC_INDEX)) | MATTR_DEVICE_nGnRnE << (8 * MATTR_DEVICE_nGnRnE_INDEX))
 
 /* translation control register */
 #define TCR_TG1_4K     (2 << 30)
 #define TCR_T1SZ       ((64 - 48) << 16)
 #define TCR_TG0_4K     (0 << 14)
 #define TCR_T0SZ       (64 - 48)
-#define TCR_EL1_VALUE  (TCR_TG1_4K | TCR_T1SZ | TCR_TG0_4K | TCR_T0SZ)
+#define TCR_EL1_VAL    (TCR_TG1_4K | TCR_T1SZ | TCR_TG0_4K | TCR_T0SZ)
 
 #endif /* MMU_H */

@@ -29,6 +29,7 @@
  */
 
 #include "sysregs.h"
+#include "mmu.h"
 
 /* RPI4 with no HIGH_PERI set */
 #define BCM2711 1
@@ -112,29 +113,7 @@ _start:
     msr CPUECTLR_EL1, x0
 
     bl      setup_gic
-
-    /*
-     * Set up SCTLR_EL2
-     * All set bits below are res1. LE, no WXN/I/SA/C/A/M
-     */
-    ldr x0, =0x30c50830
-    msr SCTLR_EL2, x0
-
-    /* setup SCTLR_EL1 */
-    ldr x0, =SCTLR_EL1_VAL_MMU_DISABLED
-    msr SCTLR_EL1, x0
-
-    /* setup HCR_EL2 */
-    ldr x0, =HCR_EL2_VAL
-    msr HCR_EL2, x0
-
-    /* setup SPSR_EL3 */
-    ldr x0, =SPSR_EL3_VAL
-    msr SPSR_EL3, x0
-
-    /* setup CPACR_EL1 */
-    ldr x0, =CPACR_EL1_VAL
-    msr CPACR_EL1, x0
+    bl      setup_more_regs
 
     mrs x6, MPIDR_EL1
     and x6, x6, #0x3
@@ -219,6 +198,41 @@ setup_gic:              // Called from secure mode - set all interrupts to group
     str w1, [x2, x0]
     b.ne    3b
     ret
+
+setup_more_regs:
+    /*
+     * Set up SCTLR_EL2
+     * All set bits below are res1. LE, no WXN/I/SA/C/A/M
+     */
+    ldr x0, =0x30c50830
+    msr SCTLR_EL2, x0
+
+    /* setup SCTLR_EL1 */
+    ldr x0, =SCTLR_EL1_VAL_MMU_DISABLED
+    msr SCTLR_EL1, x0
+
+    /* setup HCR_EL2 */
+    ldr x0, =HCR_EL2_VAL
+    msr HCR_EL2, x0
+
+    /* setup SPSR_EL3 */
+    ldr x0, =SPSR_EL3_VAL
+    msr SPSR_EL3, x0
+
+    /* setup CPACR_EL1 */
+    ldr x0, =CPACR_EL1_VAL
+    msr CPACR_EL1, x0
+
+    /* setup TCR_EL1 */
+    ldr x0, =TCR_EL1_VAL
+    msr TCR_EL1, x0
+
+    /* setup MAIR_EL1 */
+    ldr x0, =MAIR_EL1_VAL
+    msr MAIR_EL1, x0
+    
+    ret
+
 
 .globl dtb_space
 dtb_space:
