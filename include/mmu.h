@@ -12,8 +12,8 @@
  */
 #define TD_ACCESS                  (1 << 10)
 /* D5-2739 */
-/* EL1 rwx, EL0 x */
-#define TD_KERNEL_PERMS            (0 << 6)
+/* EL1 rwx, EL0 - */
+#define TD_KERNEL_PERMS            (1 << 54)
 /* EL1 rw, EL0 rwx */
 #define TD_USER_PERMS              (1 << 6)
 
