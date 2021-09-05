@@ -19,4 +19,9 @@ SECTIONS
     bss_begin = .;
     .bss : { *(.bss*) }
     bss_end = .;
+    . = ALIGN(0x1000);
+    id_pg_dir = .;
+    .data.id_pg_dir : { . += (3 * (1 << 12)); }
+    high_pg_dir = .;
+    .data.high_pg_dir : { . += (6 * (1 << 12)); }
 }
