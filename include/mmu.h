@@ -16,12 +16,17 @@
 #define TD_KERNEL_PERMS            (1 << 54)
 /* EL1 rw, EL0 rwx */
 #define TD_USER_PERMS              (1 << 6)
+/*
+ * memory region shared by all cores, but this has no effect now because non-cachable and
+ * device memory are always outer sharable
+ * */
+#define TD_INNER_SHARABLE          (3 << 8)
 
 #define TD_KERNEL_TABLE_FLAGS      (TD_TABLE | TD_VALID)
-#define TD_KERNEL_BLOCK_FLAGS      (TD_ACCESS | TD_KERNEL_PERMS | (MATTR_NORMAL_NC_INDEX << 2) | TD_BLOCK | TD_VALID)
-#define TD_DEVICE_BLOCK_FLAGS      (TD_ACCESS | TD_KERNEL_PERMS | (MATTR_DEVICE_nGnRnE_INDEX << 2) | TD_BLOCK | TD_VALID)
+#define TD_KERNEL_BLOCK_FLAGS      (TD_ACCESS | TD_INNER_SHARABLE | TD_KERNEL_PERMS | (MATTR_NORMAL_NC_INDEX << 2) | TD_BLOCK | TD_VALID)
+#define TD_DEVICE_BLOCK_FLAGS      (TD_ACCESS | TD_INNER_SHARABLE | TD_KERNEL_PERMS | (MATTR_DEVICE_nGnRnE_INDEX << 2) | TD_BLOCK | TD_VALID)
 #define TD_USER_TABLE_FLAGS        (TD_TABLE | TD_VALID)
-#define TD_USER_PAGE_FLAGS         (TD_ACCESS | TD_USER_PERMS | (MATTR_NORMAL_NC_INDEX << 2) | TD_PAGE | TD_VALID)
+#define TD_USER_PAGE_FLAGS         (TD_ACCESS | TD_INNER_SHARABLE | TD_USER_PERMS | (MATTR_NORMAL_NC_INDEX << 2) | TD_PAGE | TD_VALID)
 
 /* memory attribute indirect register */
 #define MATTR_DEVICE_nGnRnE        0x0
