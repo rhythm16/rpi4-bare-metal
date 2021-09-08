@@ -13,6 +13,8 @@ void trace_output_char(int interface, char ch);
 void trace_output_u64(int interface, u64 in);
 void trace_output_process(int interface, struct task_struct *p);
 void trace_output_insn(int interface, u64 addr);
+void trace_output_pt(int interface, u64* page);
+void trace_output_kernel_pts(int interface);
 char trace_recv(int interface);
 
 #endif /* TRACE_UTILS_H */

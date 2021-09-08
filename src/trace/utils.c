@@ -2,6 +2,7 @@
 #include "trace/utils.h"
 #include "types.h"
 #include "sched.h"
+#include "mm.h"
 
 void trace_output(int interface, char *str)
 {
@@ -73,6 +74,43 @@ void trace_output_insn(int interface, u64 addr)
     trace_output(interface, ", instruction: ");
     trace_output_u64(interface, *((u64 *)addr));
     trace_output(interface, "\n");
+}
+
+void trace_output_pt(int interface, u64* page)
+{
+    for (int i = 0; i < ENTRIES_PER_TABLE; i++) {
+        trace_output_u64(interface, (u64)(&(page[i])));
+        trace_output(interface, ": ");
+        trace_output_u64(interface, page[i]);
+        if (i % 2) {
+            trace_output(interface, "\n");
+        }
+        else {
+            trace_output(interface, "  ");
+        }
+    }
+}
+
+void trace_output_kernel_pts(int interface)
+{
+    extern u64* id_pg_dir;
+    extern u64* high_pg_dir;
+    u64* pt = (u64*)(&id_pg_dir);
+    for (int i = 0; i < ID_MAP_PAGES; i++) {
+        trace_output(PL, "pt = ");
+        trace_output_u64(PL, (u64)pt);
+        trace_output(PL, "\n");
+        trace_output_pt(PL, pt);
+        pt += ENTRIES_PER_TABLE;
+    }
+    pt = (u64*)(&high_pg_dir);
+    for (int i = 0; i < HIGH_MAP_PAGES; i++) {
+        trace_output(PL, "pt = ");
+        trace_output_u64(PL, (u64)pt);
+        trace_output(PL, "\n");
+        trace_output_pt(PL, pt);
+        pt += ENTRIES_PER_TABLE;
+    }
 }
 
 char trace_recv(int interface)

@@ -12,6 +12,7 @@
 #include "trace/trace_main.h"
 #include "trace/pl011_uart.h"
 #include "trace/ksyms.h"
+#include "trace/utils.h"
 
 #include "user_space/init.h"
 
@@ -39,6 +40,7 @@ void kernel_main(u64 id)
         ksyms_init();
         sys_call_table_relocate();
         trace_init();
+        trace_output_kernel_pts(PL);
         state = 0;
     }
 
