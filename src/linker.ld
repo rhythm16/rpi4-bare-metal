@@ -1,9 +1,9 @@
 SECTIONS
 {
     .text.boot : { *(.text.boot) }
-    .text : { *(.text) }
-    .rodata : { *(.rodata) }
-    .data : { *(.data) }
+    .text : { main_build/*(.text) trace_build/*(.text) }
+    .rodata : { main_build/*(.rodata) trace_build/*(.rodata) }
+    .data : { main_build/*(.data) trace_build/*(.data) }
     . = ALIGN(0x8);
     __start_patchable_functions = .;
     .patchable_function_entries : {
@@ -17,11 +17,18 @@ SECTIONS
     }
     . = ALIGN(0x8);
     bss_begin = .;
-    .bss : { *(.bss*) }
+    .bss : { main_build/*(.bss*) trace_build/*(.bss*) }
     bss_end = .;
     . = ALIGN(0x1000);
     id_pg_dir = .;
     .data.id_pg_dir : { . += (3 * (1 << 12)); }
     high_pg_dir = .;
     .data.high_pg_dir : { . += (6 * (1 << 12)); }
+    user_start = .
+    .text.user : { user_build/*(.text) }
+    .rodata.user : { user_build/*(.rodata) }
+    .data.user : { user_build/*(.data) }
+    .bss.user : { user_build/*(.bss) }
+    . = ALIGN(0x1000);
+    user_end = .;
 }
