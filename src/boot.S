@@ -67,9 +67,25 @@ master: /* entry point of the primary core */
     adr x0, _start
     adr x1, KERNEL_PA_BASE
     str x0, [x1]
+    /* set ttbr's */
+    adrp x0, id_pg_dir
+    msr ttbr0_el1, x0
+    adrp x0, high_pg_dir
+    msr ttbr1_el1, x0
+    /* turn on the mmu */
+    mrs x0, sctlr_el1
+    mov x1, #SCTLR_EL1_MMU_ENABLED
+    orr x0, x0, x1
+    msr sctlr_el1, x0
+    /* prepare jumping to high mem */
+    ldr x2, =LINEAR_MAP_BASE
+    add sp, sp, x2
+    adr x1, kernel_main
+    add x1, x1, x2
     /* we are core 0 */
     mov x0, #0
-    bl kernel_main
+    /* jump to high mem */
+    blr x1
     /* shouldn't get here */
     b proc_hang
 

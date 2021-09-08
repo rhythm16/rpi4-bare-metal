@@ -1,10 +1,10 @@
 #ifndef PER_IRQ_H
 #define PER_IRQ_H
 
-#include "peripherals/base.h"
 #include "types.h"
+#include "mm.h"
 
-#define GIC_BASE            0xFF840000
+#define GIC_BASE            (0xFF840000 + LINEAR_MAP_BASE)
 #define GICD_BASE           (GIC_BASE + 0x1000)
 #define GICC_BASE           (GIC_BASE + 0x2000)
 

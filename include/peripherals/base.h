@@ -1,6 +1,9 @@
 #ifndef BASE_H
 #define BASE_H
 
-#define PBASE 0xFE000000
+#include "mm.h"
+
+#define DEVICE_BASE  0xFE000000
+#define PBASE (LINEAR_MAP_BASE + DEVICE_BASE)
 
 #endif /* BASE_H */
