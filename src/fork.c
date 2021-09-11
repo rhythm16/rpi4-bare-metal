@@ -12,7 +12,7 @@ int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 user_stack_page)
     struct task_struct *p;
 
     /* allocate page for new task's task_struct, ke_regs and kernel stack */
-    p = (struct task_struct *)get_free_page();
+    p = (struct task_struct *)get_kernel_page();
     if (!p)
         return -1;
 
@@ -64,7 +64,7 @@ int prepare_move_to_user(u64 fn)
     /* jump to fn as EL0 after eret in kernel_exit */
     regs->elr = fn;
     regs->pstate = SPSR_EL1_MODE_EL0t;
-    u64 user_stack_page = get_free_page();
+    u64 user_stack_page = get_kernel_page();
     if (!user_stack_page)
         return -1;
     regs->sp = user_stack_page + PAGE_SIZE;

@@ -20,7 +20,7 @@ int sys_clone(u64 stack)
 
 u64 sys_get_free_page()
 {
-    u64 addr = get_free_page();
+    u64 addr = get_kernel_page();
     if (!addr)
         return -1;
     return addr;

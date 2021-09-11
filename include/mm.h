@@ -42,8 +42,8 @@
 #define DEVICE_START  (0xFC000000)
 #define DEVICE_END    (0x100000000)
 
-#define MALLOC_START (0x40000000 + LINEAR_MAP_BASE)
-#define MALLOC_END   (0xFC000000 + LINEAR_MAP_BASE)
+#define MALLOC_START (0x40000000)
+#define MALLOC_END   (0xFC000000)
 #define MALLOC_SIZE  (MALLOC_END - MALLOC_START)
 #define MALLOC_PAGES (MALLOC_SIZE / PAGE_SIZE)
 #define THREAD_SIZE  PAGE_SIZE
@@ -55,6 +55,7 @@
 #include "types.h"
 
 void memzero(u64 src, unsigned int n);
+u64 get_kernel_page();
 u64 get_free_page();
 void free_page(u64 p);
 void memcpy(u64* dst, u64* src, u64 bytes);
