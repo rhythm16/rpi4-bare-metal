@@ -88,3 +88,12 @@ void copy_ke_regs(struct ke_regs * to, struct ke_regs * from)
     to->pstate = from->pstate;
 }
 
+/* bytes is round down to the nearest 8 */
+void memcpy(u64* dst, u64* src, u64 bytes)
+{
+    u64 num = bytes >> 3;
+    for (u64 i = 0; i < num; i++) {
+        dst[i] = src[i];
+    }
+}
+

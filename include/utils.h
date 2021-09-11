@@ -24,5 +24,6 @@ void main_output_char(int interface, char ch);
 char main_recv(int interface);
 
 void copy_ke_regs(struct ke_regs * to, struct ke_regs * from);
+void memcpy(u64* dst, u64* src, u64 bytes);
 
 #endif /* UTILS_H */

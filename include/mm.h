@@ -50,6 +50,8 @@
 
 #define LINEAR_MAP_BASE 0xffff000000000000
 
+#define USER_SP_INIT_POS (2 * PAGE_SIZE)
+
 #ifndef __ASSEMBLER__
 
 #include "types.h"
@@ -58,7 +60,6 @@ void memzero(u64 src, unsigned int n);
 u64 get_kernel_page();
 u64 get_free_page();
 void free_page(u64 p);
-void memcpy(u64* dst, u64* src, u64 bytes);
 
 extern u64 _start;
 #define KERNEL_START (&(_start))
