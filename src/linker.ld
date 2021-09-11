@@ -24,7 +24,7 @@ SECTIONS
     .data.id_pg_dir : { . += (3 * (1 << 12)); }
     high_pg_dir = .;
     .data.high_pg_dir : { . += (6 * (1 << 12)); }
-    user_start = .
+    user_start = .;
     .text.user : { user_build/*(.text) }
     .rodata.user : { user_build/*(.rodata) }
     .data.user : { user_build/*(.data) }
