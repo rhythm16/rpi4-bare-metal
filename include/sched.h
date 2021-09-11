@@ -44,6 +44,7 @@ struct task_struct
 };
 
 void core_switch_to(struct task_struct *prev, struct task_struct *next);
+void set_pgd(u64 pgd);
 void preempt_disable();
 void preempt_enable();
 void _schedule();
