@@ -4,7 +4,7 @@
 #include "types.h"
 #include "mm.h"
 
-#define GIC_BASE            (0xFF840000 + LINEAR_MAP_BASE)
+#define GIC_BASE            PA_TO_KVA(0xFF840000)
 #define GICD_BASE           (GIC_BASE + 0x1000)
 #define GICC_BASE           (GIC_BASE + 0x2000)
 

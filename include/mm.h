@@ -49,6 +49,7 @@
 #define THREAD_SIZE  PAGE_SIZE
 
 #define LINEAR_MAP_BASE 0xffff000000000000
+#define PA_TO_KVA(pa)   ((pa) + LINEAR_MAP_BASE)
 
 #define USER_SP_INIT_POS (2 * PAGE_SIZE)
 
