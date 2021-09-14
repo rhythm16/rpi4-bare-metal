@@ -29,6 +29,7 @@
 #ifndef __ASSEMBLER__
 
 void ret_from_fork();
+void err_hang();
 
 #endif /* __ASSEMBLER */
 #endif /* ENTRY_H */

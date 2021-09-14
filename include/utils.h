@@ -25,5 +25,6 @@ char main_recv(int interface);
 
 void copy_ke_regs(struct ke_regs * to, struct ke_regs * from);
 void memcpy(u64* dst, u64* src, u64 bytes);
+void panic(char *msg);
 
 #endif /* UTILS_H */

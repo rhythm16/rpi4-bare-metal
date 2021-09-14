@@ -2,6 +2,7 @@
 #include "types.h"
 #include "mini_uart.h"
 #include "sched.h"
+#include "entry.h"
 
 void u64_to_char_array(u64 in, char *buf)
 {
@@ -95,5 +96,13 @@ void memcpy(u64* dst, u64* src, u64 bytes)
     for (u64 i = 0; i < num; i++) {
         dst[i] = src[i];
     }
+}
+
+void panic(char *msg)
+{
+    main_output(MU, "KERNEL PANIC: ");
+    main_output(MU, msg);
+    main_output(MU, "\n");
+    err_hang();
 }
 
