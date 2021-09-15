@@ -19,9 +19,21 @@ The kernel is loaded at address 0x00080000 (512K), currently the image is ~40K, 
 `get_free_page()` allocates physical frames from 1G upwards to 3G960M
 
 ### Virtual Memory Design
-To setup virtual memory, start by mapping the first 2M of memory identically and map all 4G of physical RAM to virtual address starting from 0xffff000000000000, turn on MMU then branch to high address (must relocate the of the high address).
+To setup virtual memory, start by mapping the first 2M of memory identically and map all 4G of physical RAM to virtual address starting from `0xffff000000000000`, turn on MMU then branch to high address (must relocate the of the high address).
 
-#### Relocation
+### Kernel Virtual Memory Layout
+|map property|PA start |PA end|VA start|VA end|flags|
+|-|-----|--------|-|-|-|
+|identity|`0x0`|`0x1000000`(16M)|`0x0`|`0x1000000`(16M)|normal-nc|
+|high address first part|`0x0`|`0x3B400000`(948M)|`0xffff000000000000`|`0xffff00003B400000`|normal-nc|
+|high address vc|`0x3B400000`|`0x40000000`(1G)|`0xffff00003B400000`|`0xffff000040000000`|no map|
+|high address second part|`0x40000000`|`0xFC000000`(3G960M)|`0xffff000040000000`|`0xffff0000FC000000`|normal-nc|
+|high address device|`0xFC000000`|`0x100000000`(4G)|`0xffff0000FC000000`|`0xffff000100000000`|device|
+
+### Process Memory Management
+`copy_process` allocates a page for the process's `task_struct` and kernel stack, then `copy_virt_memory` is called which loops with `allocate_user_page` which allocates pages used for the page tables and user code/data. 
+
+### Relocation
 Because of PC-relative addressing, `KERNEL_START` macro should still work after moving to high address, but some help is needed when we load the high address.
 
 ## User space

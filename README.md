@@ -16,6 +16,7 @@ This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be
 - [x] Exercise 1-2 (pl011-uart)
 - [x] Basic Ftrace (works, but lack configurability and slow :) )
 - [x] Lesson 05 (user mode and system calls)
+- [x] Lesson 06 (virtual memory)
 
 ## What you need
 * Raspberry pi 4 model b
@@ -42,43 +43,38 @@ They all should not have trailing `/`s.
 7. Connect the USB-TTL cable like so:
 ![](https://i.imgur.com/8pMcUbv.jpg)
 8. Run `gtkterm -p /dev/ttyUSB0 -s 115200` and `gtkterm -p /dev/ttyUSB1 -s 115200` (you might have to add yourself the the `dialout` group).
-9. Power on the RPI4, you should see the output like: (out of date, will update later)
+9. Power on the RPI4, you should see the output like:
 ```
 Bare Metal... (core 0)
 EL: 1
-000000000011a466
-Bare Metal... (core 1)
-EL: 1
-000000000016c382
-Bare Metal... (core 2)
-EL: 1
-00000000001bdce1
-Bare Metal... (core 3)
-EL: 1
-000000000020f81f
-task address: 0000000000082e40, state: 0000000000000000, counter: 0000000000000000, priority: 0000000000000001, preempt_count: 0000000000000000
+0000000032b32b23
+task address: ffff000000085800, state: 0000000000000000, counter: 0000000000000000, priority: 0000000000000001, preempt_count: 0000000000000000, pgd: 0000000000000000
+created pid 1 at ffff000040000000
 init schedule..
-task1
-task1
-task1
-...
-
-reset timer
-write back IAR
+pid 1 started in EL1
+pid 1 in user space
+created pid 2 at ffff000040007000
+parent
+parent
+parent
+parent
+parent
+parent
+parent
 core 0: generic timer interrupt
-task address: 0000000040000000, state: 0000000000000000, counter: 0000000000000001, priority: 0000000000000001, preempt_count: 0000000000000000
-task2
-task2
-task2
+task address: ffff000040000000, state: 0000000000000000, counter: 0000000000000001, priority: 0000000000000001, preempt_count: 0000000000000000, pgd: 0000000040002000
+child
+child
+child
+child
+child
+child
+child
+child
+child
 ...
-
-reset timer
-write back IAR
-core 0: generic timer interrupt
-task address: 0000000040001000, state: 0000000000000000, counter: 0000000000000001, priority: 0000000000000001, preempt_count: 0000000000000000
-init schedule..
 ```
-with timer interrupts happening once every second and task switching between init, task 1 and task 2.
+with timer interrupts happening once every second and task switching between init, pid 1 and pid 2.
 
 10. Type some characters, they should be appended:
 ```
@@ -87,10 +83,7 @@ Mini-UART Recv: f
 Mini-UART Recv: a
 ```
 
-11. The other output should be:
-```
-pl011-uart initialized
-```
+11. The other output should contain lots of tracing and debugging info including kernel symbols, ftrace code modification sites, page tables and function traces.
 
 ## Caveats & Notes
 There are some problems/questions that I found during this:
