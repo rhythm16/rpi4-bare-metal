@@ -7,8 +7,8 @@
 #define UTHREAD 0
 #define KTHREAD 1
 
-int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 user_stack_page);
-int prepare_move_to_user(u64 fn);
+int copy_process(u64 clone_flags, u64 fn, u64 arg);
+int prepare_move_to_user(u64 start_addr, u64 size, u64 fn);
 struct ke_regs * task_ke_regs(struct task_struct *tsk);
 
 /* kernel entry/exit regs */

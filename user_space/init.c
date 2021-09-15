@@ -7,7 +7,8 @@ void loop(char *str)
 {
     while (1) {
         call_sys_write(str);
-        int i = 1000000;
+        call_sys_write("\n");
+        int i = 100000;
         while (i > 0) {
             i--;
         }

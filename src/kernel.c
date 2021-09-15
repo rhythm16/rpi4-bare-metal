@@ -25,7 +25,11 @@ void kernel_process()
     main_output_char(MU, get_el() + '0');
     main_output(MU, "\n");
 
-    int err = prepare_move_to_user((u64)user_process);
+    extern u64 user_start;
+    extern u64 user_end;
+    u64 user_size = ((u64)(&user_end)) - ((u64)(&user_start));
+
+    int err = prepare_move_to_user((u64)&user_start, user_size, ((u64)user_process) - (u64)&user_start);
     if (err < 0)
         main_output(MU, "Failed to move to user mode!\n");
 }
@@ -75,7 +79,7 @@ void kernel_main(u64 id)
         sched_init();
         main_output_process(MU, current);
         /* create pid 1, kernel threads don't need a user stack page */
-        int res = copy_process(KTHREAD, (u64)&kernel_process, 0, 0);
+        int res = copy_process(KTHREAD, (u64)&kernel_process, 0);
         if (res <= 0) {
             main_output(MU, "fork error\n");
         }

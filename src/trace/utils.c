@@ -63,6 +63,8 @@ void trace_output_process(int interface, struct task_struct *p)
     trace_output_u64(interface, (u64)(p->priority));
     trace_output(interface, ", preempt_count: ");
     trace_output_u64(interface, (u64)(p->preempt_count));
+    trace_output(interface, ", pgd: ");
+    trace_output_u64(interface, p->mm.pgd);
     trace_output(interface, "\n");
 }
 

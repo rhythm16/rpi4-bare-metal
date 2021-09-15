@@ -63,6 +63,8 @@ void main_output_process(int interface, struct task_struct *p)
     main_output_u64(interface, (u64)(p->priority));
     main_output(interface, ", preempt_count: ");
     main_output_u64(interface, (u64)(p->preempt_count));
+    main_output(interface, ", pgd: ");
+    main_output_u64(interface, p->mm.pgd);
     main_output(interface, "\n");
 }
 

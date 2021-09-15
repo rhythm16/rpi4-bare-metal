@@ -6,15 +6,13 @@
 #include "sysregs.h"
 #include "utils.h"
 
-int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 user_stack_page)
+int copy_process(u64 clone_flags, u64 fn, u64 arg)
 {
     preempt_disable();
     struct task_struct *p;
 
     /* allocate page for new task's task_struct, ke_regs and kernel stack */
     p = (struct task_struct *)get_kernel_page();
-    if (!p)
-        return -1;
 
     struct ke_regs *childregs = task_ke_regs(p);
     memzero((u64)childregs, sizeof(struct ke_regs));
@@ -32,9 +30,10 @@ int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 user_stack_page)
         copy_ke_regs(childregs, cur_regs);
         /* set child's x0 after kernel_exit to 0 to indicate it is child */
         childregs->regs[0] = 0;
-        childregs->sp = user_stack_page + PAGE_SIZE;
-        /* set task_struct's user_stack_page */
-        p->user_stack_page = user_stack_page;
+        if (copy_virt_memory(p) != 0) {
+            free_kernel_page((u64)p);
+            return -1;
+        }
     }
 
     p->flags = clone_flags;
@@ -57,18 +56,19 @@ int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 user_stack_page)
     return pid;
 }
 
-int prepare_move_to_user(u64 fn)
+int prepare_move_to_user(u64 start_addr, u64 size, u64 fn)
 {
     struct ke_regs *regs = task_ke_regs(current);
     memzero((u64)regs, sizeof(*regs));
     /* jump to fn as EL0 after eret in kernel_exit */
     regs->elr = fn;
     regs->pstate = SPSR_EL1_MODE_EL0t;
-    u64 user_stack_page = get_kernel_page();
-    if (!user_stack_page)
+    regs->sp = USER_SP_INIT_POS;
+    u64 code_page = allocate_user_page(current, 0);
+    if (code_page == 0)
         return -1;
-    regs->sp = user_stack_page + PAGE_SIZE;
-    current->user_stack_page = user_stack_page;
+    memcpy((u64*)code_page, (u64*)start_addr, size);
+    set_pgd(current->mm.pgd);
     return 0;
 }
 

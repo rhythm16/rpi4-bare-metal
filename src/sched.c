@@ -1,4 +1,4 @@
-#include "sched.h"
+#include "fork.h"
 #include "irq.h"
 #include "mm.h"
 
@@ -59,6 +59,7 @@ void switch_to(struct task_struct *next)
         return;
     struct task_struct *prev = current;
     current = next;
+    set_pgd(next->mm.pgd);
     core_switch_to(prev, next);
 }
 
@@ -78,8 +79,6 @@ void exit_process()
 {
     preempt_disable();
     current->state = TASK_ZOMBIE;
-    if (current->user_stack_page)
-        free_page(current->user_stack_page);
     preempt_enable();
     schedule();
 }

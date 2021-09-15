@@ -5,7 +5,7 @@
 #include "generic_timer.h"
 #include "utils.h"
 
-const char entry_error_messages[18][32] = 
+const char entry_error_messages[19][32] = 
 {
     "SYNC_INVALID_EL1t",
     "IRQ_INVALID_EL1t",
@@ -24,7 +24,8 @@ const char entry_error_messages[18][32] =
     "FIQ_INVALID_EL0_32",
     "SERROR_INVALID_EL0_32",
     "SYNC_ERROR",
-    "SYSCALL_ERROR"
+    "SYSCALL_ERROR",
+    "DATA_ABORT_ERROR"
 };
 
 void show_invalid_entry_message(u32 type, u64 esr, u64 address) 

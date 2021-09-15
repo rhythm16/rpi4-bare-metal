@@ -11,6 +11,8 @@
 #define TASK_RUNNING      0
 #define TASK_ZOMBIE       1
 
+#define MAX_PAGE_COUNT    16
+
 extern struct task_struct *current;
 extern struct task_struct *task[NR_TASKS];
 extern int nr_tasks;
@@ -32,6 +34,19 @@ struct core_context
     u64 lr;
 };
 
+struct user_page
+{
+    u64 pa;
+    u64 uva;
+};
+
+struct mm_struct
+{
+    u64 pgd;
+    struct user_page user_pages[MAX_PAGE_COUNT];
+    u64 kernel_pages[MAX_PAGE_COUNT];
+};
+
 struct task_struct
 {
     struct core_context core_context;
@@ -39,8 +54,8 @@ struct task_struct
     long counter;
     long priority;
     long preempt_count;
-    u64 user_stack_page;
     u64 flags;
+    struct mm_struct mm;
 };
 
 void core_switch_to(struct task_struct *prev, struct task_struct *next);
@@ -56,7 +71,9 @@ void sched_init();
 
 #define INIT_TASK \
 /* core_context */	{ {0,0,0,0,0,0,0,0,0,0,0,0,0}, \
-/* state, counter, priority, preempt_count */	0, 0, 1, 0 \
+/* state, counter, priority, preempt_count */	0, 0, 1, 0, \
+/* flags */ KTHREAD, \
+/* mm */ {0, {{0}}, {0} } \
 }
 
 #endif /* __ASSEMBLER__ */

@@ -65,5 +65,6 @@
 /* exception syndrome register EL1 (ESR_EL1) */
 #define ESR_ELx_EC_SHIFT 26
 #define ESR_ELx_EC_SVC64 0x15
+#define ESR_ELx_EC_DA_LOW 0x24
 
 #endif /* SYSREGS_H */

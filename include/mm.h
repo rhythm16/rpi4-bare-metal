@@ -1,6 +1,7 @@
 #ifndef MM_H
 #define MM_H
 
+#define PAGE_MASK  0xfffffffffffff000
 #define PAGE_SHIFT 12
 #define TABLE_SHIFT 9
 #define SECTION_SHIFT (PAGE_SHIFT + TABLE_SHIFT)
@@ -50,15 +51,25 @@
 
 #define LINEAR_MAP_BASE 0xffff000000000000
 #define PA_TO_KVA(pa)   ((pa) + LINEAR_MAP_BASE)
+#define KVA_TO_PA(kva)  ((kva) - LINEAR_MAP_BASE)
 
 #define USER_SP_INIT_POS (2 * PAGE_SIZE)
 
 #ifndef __ASSEMBLER__
 
 #include "types.h"
+#include "sched.h"
 
 void memzero(u64 src, unsigned int n);
+u64 allocate_user_page(struct task_struct *task, u64 uva);
+int map_page(struct task_struct *task, u64 uva, u64 phys_page);
+u64 map_table(u64 *table, u64 shift, u64 uva, int *new_table);
+void map_table_entry(u64 *pte, u64 uva, u64 phys_page);
+int copy_virt_memory(struct task_struct *dst);
+int task_kp_count(struct task_struct *task);
+int task_up_count(struct task_struct *task);
 u64 get_kernel_page();
+void free_kernel_page(u64 kp);
 u64 get_free_page();
 void free_page(u64 p);
 

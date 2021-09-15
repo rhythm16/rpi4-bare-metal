@@ -168,11 +168,13 @@ handle_irq_el0_64:
 
 handle_sync_el0_64:
     kernel_entry 0
-    /* check esr_el1 if it is indeed svc */
+    /* check esr_el1 if it is svc or da */
     mrs x25, esr_el1
     lsr x24, x25, #ESR_ELx_EC_SHIFT
     cmp x24, #ESR_ELx_EC_SVC64
     b.eq el0_svc
+    cmp x24, #ESR_ELx_EC_DA_LOW
+    b.eq el0_da
     handle_invalid_entry 0, SYNC_ERROR
 
 /*
@@ -205,6 +207,18 @@ ret_from_syscall:
      * kernel_exit will pop it back to x0
      */
     str x0, [sp, 0]
+    kernel_exit 0
+
+el0_da:
+    bl irq_enable
+    mrs x0, far_el1
+    mrs x1, esr_el1
+    bl do_data_abort
+    cmp x0, 0
+    b.eq 1f
+    handle_invalid_entry 0, DATA_ABORT_ERROR
+1:
+    bl irq_disable
     kernel_exit 0
 
 .globl ret_from_fork

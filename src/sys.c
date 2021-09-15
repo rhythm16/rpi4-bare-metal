@@ -5,25 +5,16 @@
 #include "sched.h"
 #include "sys.h"
 
-void * sys_call_table[] = {sys_write, sys_get_free_page, sys_clone, sys_exit};
+void * sys_call_table[] = {sys_write, sys_fork, sys_exit};
 
 void sys_write(char * buf)
 {
     main_output(MU, buf);
 }
 
-int sys_clone(u64 stack)
+int sys_fork(u64 stack)
 {
-    /* we are cloning, so fn and arg do not need to be provided */
-    return copy_process(UTHREAD, 0, 0, stack);
-}
-
-u64 sys_get_free_page()
-{
-    u64 addr = get_kernel_page();
-    if (!addr)
-        return -1;
-    return addr;
+    return copy_process(UTHREAD, 0, 0);
 }
 
 void sys_exit()
