@@ -171,7 +171,7 @@ void free_page(u64 p)
 int do_data_abort(u64 far, u64 esr)
 {
     u64 dfsc = esr & 0x3f;
-    /* 0x4: level 3 translation fault */
+    /* 0x7: level 3 translation fault */
     if (dfsc == 0x7) {
         u64 page = get_free_page();
         if (map_page(current, far & PAGE_MASK, page) < 0)
