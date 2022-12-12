@@ -1,5 +1,18 @@
 # RPI 4 bare metal
 
+## Errors
+
+This repo contains all kinds of errors, including but not limited to:
+
+- does not boot if you use the ubuntu cross compilation toolchain (I was using [crosstool-ng](https://crosstool-ng.github.io/)'s rpi4 toolchain when developing)
+- wrong physical memory layout (I misread `0x3B400000` as `0x38400000`, not breaking, but bad)
+- typo(s) in `Documentation.md`
+- typo(s) in code comments
+
+Please let me know if you find any other errors, I would like to fix them. At some point...
+
+---
+
 This repo is mostly based on [Low Level Devel's youtube series](https://youtu.be/pd9AVmcRc6U) and [Sergey Matyukevich's tutorial](https://github.com/s-matyukevich/raspberry-pi-os). This version is for __Raspberry pi 4 model b__ only, since it's what I have.
 
 ## Current progress
