@@ -21,7 +21,7 @@ hook:
     /* prepare arguments and call into C */
     mov x0, x30
     bl traced
-    
+
     /* restore function arguments and fp, although the fp shouldn't change */
     ldp x0, x1,    [sp, #16 * 0]
     ldp x2, x3,    [sp, #16 * 1]

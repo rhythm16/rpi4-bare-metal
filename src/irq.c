@@ -5,21 +5,21 @@
 #include "generic_timer.h"
 #include "utils.h"
 
-const char entry_error_messages[19][32] = 
+const char entry_error_messages[19][32] =
 {
     "SYNC_INVALID_EL1t",
     "IRQ_INVALID_EL1t",
     "FIQ_INVALID_EL1t",
     "SERROR_INVALID_EL1t",
-    "SYNC_INVALID_EL1h", 
+    "SYNC_INVALID_EL1h",
     "IRQ_INVALID_EL1h",
     "FIQ_INVALID_EL1h",
     "SERROR_INVALID_EL1h",
-    "SYNC_INVALID_EL0_64", 
+    "SYNC_INVALID_EL0_64",
     "IRQ_INVALID_EL0_64",
     "FIQ_INVALID_EL0_64",
     "SERROR_INVALID_EL0_64",
-    "SYNC_INVALID_EL0_32", 
+    "SYNC_INVALID_EL0_32",
     "IRQ_INVALID_EL0_32",
     "FIQ_INVALID_EL0_32",
     "SERROR_INVALID_EL0_32",
@@ -28,7 +28,7 @@ const char entry_error_messages[19][32] =
     "DATA_ABORT_ERROR"
 };
 
-void show_invalid_entry_message(u32 type, u64 esr, u64 address) 
+void show_invalid_entry_message(u32 type, u64 esr, u64 address)
 {
     main_output(MU, "ERROR CAUGHT: ");
     main_output(MU, entry_error_messages[type]);

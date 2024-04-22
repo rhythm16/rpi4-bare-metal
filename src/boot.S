@@ -143,7 +143,7 @@ map_identity:
     ldr x3, =ID_MAP_SIZE
     eor x4, x4, x4
     create_block_map x0, x2, x3, x4, TD_KERNEL_BLOCK_FLAGS, x5
-    
+
     /* restore return address */
     mov x30, x29
     ret
@@ -224,7 +224,7 @@ map_high:
     mov x3, x19
     mov x4, x24
     create_block_map x0, x2, x3, x4, TD_DEVICE_BLOCK_FLAGS, x5
-    
+
     /* restore return address */
     mov x30, x29
     ret

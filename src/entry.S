@@ -41,8 +41,8 @@
     ldp x22, x23, [sp, #16 * 16]
     ldp x30, x21, [sp, #16 * 15]
 
-    /* 
-     * we don't have to restore sp if el == 1 because 
+    /*
+     * we don't have to restore sp if el == 1 because
      * core_switch_to helps us with that
      */
     .if  \el == 0
@@ -180,8 +180,8 @@ handle_sync_el0_64:
 /*
  * x25 = NR_SYSCALLS
  * x26 = syscall number
- * x27 = sys_call_table 
- */ 
+ * x27 = sys_call_table
+ */
 
 el0_svc:
     adr x27, sys_call_table
@@ -190,7 +190,7 @@ el0_svc:
     mov x25, #NR_SYSCALLS
     bl irq_enable
     cmp x26, x25
-    /* branch if syscall number >= NR_SYSCALLS */ 
+    /* branch if syscall number >= NR_SYSCALLS */
     b.hs invalid_syscall_num
     /* call syscall */
     ldr x16, [x27, x26, lsl #3]
@@ -203,7 +203,7 @@ invalid_syscall_num:
 ret_from_syscall:
     bl irq_disable
     /*
-     * store the return value of the syscall on the stack so 
+     * store the return value of the syscall on the stack so
      * kernel_exit will pop it back to x0
      */
     str x0, [sp, 0]

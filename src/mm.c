@@ -69,8 +69,8 @@ int map_page(struct task_struct *task, u64 uva, u64 phys_page)
     return 0;
 }
 
-/* 
- * args: 
+/*
+ * args:
  * @table: kva of table to fill an entry
  * @shift: shift used to turn va into index
  * @va: the va we want to map

@@ -31,7 +31,7 @@ To setup virtual memory, start by mapping the first 2M of memory identically and
 |high address device|`0xFC000000`|`0x100000000`(4G)|`0xffff0000FC000000`|`0xffff000100000000`|device|
 
 ### Process Memory Management
-`copy_process` allocates a page for the process's `task_struct` and kernel stack, then `copy_virt_memory` is called which loops with `allocate_user_page` which allocates pages used for the page tables and user code/data. 
+`copy_process` allocates a page for the process's `task_struct` and kernel stack, then `copy_virt_memory` is called which loops with `allocate_user_page` which allocates pages used for the page tables and user code/data.
 
 ### Relocation
 Because of PC-relative addressing, `KERNEL_START` macro should still work after moving to high address, but some help is needed when we load the high address.

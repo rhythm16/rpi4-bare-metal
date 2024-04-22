@@ -6,4 +6,3 @@ memzero:
     /* branch if greater than zero */
     b.gt memzero
     ret
-    

@@ -230,7 +230,7 @@ setup_more_regs:
     /* setup MAIR_EL1 */
     ldr x0, =MAIR_EL1_VAL
     msr MAIR_EL1, x0
-    
+
     ret
 
 

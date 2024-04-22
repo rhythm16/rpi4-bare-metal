@@ -30,7 +30,7 @@ void cal_ksyms_count()
 
     int i = 0;
     u64 count = 0;
-    
+
     while ((ks_ptr[i].name)[0] != 0) {
         i++;
         count++;

@@ -6,9 +6,9 @@
 #define TD_BLOCK                   (0 << 1)
 #define TD_PAGE                    (1 << 1)
 #define TD_TABLE                   (1 << 1)
-/* 
+/*
  * we can check ID_AA64MMFR1_EL1.HAFDBS to see if the hardware supports hw management
- * of the access flag and dirty state, but we'll just set the access flag to 1 by sw. 
+ * of the access flag and dirty state, but we'll just set the access flag to 1 by sw.
  */
 #define TD_ACCESS                  (1 << 10)
 /* D5-2739 */
